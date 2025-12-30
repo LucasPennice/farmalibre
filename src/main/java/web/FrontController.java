@@ -20,9 +20,7 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        // Ejemplo de routing básico
         if (path.equals("/") || path.equals("/index")) {
-            // Redirigir a la página principal
             request.getRequestDispatcher("/index.jsp").forward(request, response);
         } else if (path.startsWith("/carrito")) {
             handleCarrito(request, response);
