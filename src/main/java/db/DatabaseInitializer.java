@@ -9,7 +9,7 @@ public class DatabaseInitializer {
 
     public static void init() {
         try (Connection con = DbUtil.getConnection()) {
-            run(con, "schema.sql");
+            run(con, "./src/main/resources/schema.sql");
         } catch (Exception e) {
             throw new RuntimeException("Error inicializando la base", e);
         }
