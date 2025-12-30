@@ -9,11 +9,13 @@
     "quick": "./scripts/restart.sh",
     "refreshweb": "pnpm run compile & pnpm run deploy",
     "deploy": "mvn clean package && cp target/*.war $CATALINA_HOME/webapps/",
-    "tomcat:start": "$CATALINA_HOME/bin/startup.sh",
+    "refresh":"npm run compile & npm run deploy",
+    "tomcat:start": "dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
     "tomcat:stop": "$CATALINA_HOME/bin/shutdown.sh",
-    "tomcat:restart": "$CATALINA_HOME/bin/shutdown.sh && sleep 2 && $CATALINA_HOME/bin/startup.sh"
+    "tomcat:restart": "$CATALINA_HOME/bin/shutdown.sh && sleep 2 && dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh"
   },
   "devDependencies": {
-    "chokidar": "^3.5.3"
+    "chokidar": "^3.5.3",
+    "dotenv-cli": "^7.4.2"
   }
 }
