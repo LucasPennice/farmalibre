@@ -4,7 +4,7 @@ USE farmacia_db;
 -- =========================
 -- CATEGORIA DROGA
 -- =========================
-CREATE TABLE categoria_droga (
+CREATE TABLE IF NOT EXISTS categoria_droga (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     aprobacion_pendiente BOOLEAN NOT NULL DEFAULT FALSE
@@ -13,7 +13,7 @@ CREATE TABLE categoria_droga (
 -- =========================
 -- DROGA
 -- =========================
-CREATE TABLE droga (
+CREATE TABLE IF NOT EXISTS droga (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     composicion TEXT NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE droga (
 -- =========================
 -- PROVEEDOR
 -- =========================
-CREATE TABLE proveedor (
+CREATE TABLE IF NOT EXISTS proveedor (
     id INT AUTO_INCREMENT PRIMARY KEY,
     razon_social VARCHAR(150) NOT NULL,
     nombre_fantasia VARCHAR(150),
@@ -36,7 +36,7 @@ CREATE TABLE proveedor (
 -- =========================
 -- STOCK PROVEEDOR DROGA
 -- =========================
-CREATE TABLE stock_droga_proveedor (
+CREATE TABLE IF NOT EXISTS stock_droga_proveedor (
     id INT AUTO_INCREMENT PRIMARY KEY,
     droga_id INT NOT NULL,
     proveedor_id INT NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE stock_droga_proveedor (
 -- =========================
 -- USUARIO
 -- =========================
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo_responsable VARCHAR(150) NOT NULL,
     direccion VARCHAR(200),
