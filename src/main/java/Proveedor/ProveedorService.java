@@ -1,5 +1,117 @@
 package Proveedor;
 
-public class ProveedorService {
-    
+import java.util.LinkedList;
+import java.util.logging.Logger;
+
+import Utils.ValidatorUtil;
+import interfaces.GenericService;
+
+public class ProveedorService implements GenericService<Proveedor, String> {
+    Logger log = Logger.getLogger(ProveedorService.class.getName());
+
+    private ProveedorDAO proveedorDAO = new ProveedorDAO();
+
+    @Override
+    public Proveedor findById(String id) {
+        log.info("Buscando proveedor por ID: " + id);
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
+        }
+        try {
+            Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El id debe ser un número válido");
+        }
+        return proveedorDAO.findById(id);
+    }
+
+    @Override
+    public LinkedList<Proveedor> findAll() {
+        log.info("Listando todos los proveedores");
+        return proveedorDAO.findAll();
+    }
+
+    @Override
+    public void save(Proveedor proveedor) {
+        log.info("Guardando proveedor: " + proveedor);
+        validateProveedor(proveedor);
+
+        if (proveedor.getId() != null) {
+            Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+            if (existing != null) {
+                throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " ya existe");
+            }
+        }
+
+        proveedorDAO.save(proveedor);
+    }
+
+    @Override
+    public void update(Proveedor proveedor) {
+        log.info("Actualizando proveedor: " + proveedor);
+        if (proveedor == null || proveedor.getId() == null) {
+            throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
+        }
+        validateProveedor(proveedor);
+
+        Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+        if (existing == null) {
+            throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
+        }
+
+        proveedorDAO.update(proveedor);
+    }
+
+    @Override
+    public void delete(Proveedor proveedor) {
+        log.info("Eliminando proveedor: " + proveedor);
+        if (proveedor == null || proveedor.getId() == null) {
+            throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
+        }
+
+        Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+        if (existing == null) {
+            throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
+        }
+
+        proveedorDAO.delete(proveedor);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        log.info("Eliminando proveedor por ID: " + id);
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
+        }
+        try {
+            Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El id debe ser un número válido");
+        }
+
+        Proveedor existing = proveedorDAO.findById(id);
+        if (existing == null) {
+            throw new IllegalArgumentException("El proveedor con id " + id + " no existe");
+        }
+
+        proveedorDAO.deleteById(id);
+    }
+
+    private void validateProveedor(Proveedor proveedor) {
+        if (proveedor == null) {
+            throw new IllegalArgumentException("El proveedor no puede ser nulo");
+        }
+        if (proveedor.getRazonSocial() == null || proveedor.getRazonSocial().trim().isEmpty()) {
+            throw new IllegalArgumentException("La razón social no puede ser nula o vacía");
+        }
+        if (proveedor.getCuit() == null || proveedor.getCuit().trim().isEmpty()) {
+            throw new IllegalArgumentException("El CUIT no puede ser nulo o vacío");
+        }
+        if (!ValidatorUtil.validateCuit(proveedor.getCuit())) {
+            throw new IllegalArgumentException("El CUIT no es válido");
+        }
+        if (proveedor.getTipoPersona() == null) {
+            throw new IllegalArgumentException("El tipo de persona no puede ser nulo");
+        }
+    }
 }
