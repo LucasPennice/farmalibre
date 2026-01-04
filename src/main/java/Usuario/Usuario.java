@@ -2,7 +2,7 @@ package Usuario;
 
 public class Usuario {
     private Integer id;
-    private String nombre_completo_responsable;
+    private String nombreCompletoRes;
     private String direccion;
     private byte[] foto_perfil;
     private Rol rol;
@@ -10,9 +10,9 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Integer id, String nombre_completo_responsable, String direccion, byte[] foto_perfil, Rol rol) {
+    public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol) {
         this.id = id;
-        this.nombre_completo_responsable = nombre_completo_responsable;
+        this.nombreCompletoRes = NombreCompletoRes;
         this.direccion = direccion;
         this.foto_perfil = foto_perfil;
         this.rol = rol;
@@ -26,12 +26,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getNombre_completo_responsable() {
-        return nombre_completo_responsable;
+    public String getNombreCompletoRes() {
+        return nombreCompletoRes;
     }
 
-    public void setNombre_completo_responsable(String nombre_completo_responsable) {
-        this.nombre_completo_responsable = nombre_completo_responsable;
+    public void setNombreCompletoRes(String nombreCompletoRes) {
+        this.nombreCompletoRes = nombreCompletoRes;
     }
 
     public String getDireccion() {
