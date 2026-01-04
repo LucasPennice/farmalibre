@@ -2,6 +2,7 @@
   "name": "farmalibre-dev",
   "version": "1.0.0",
   "scripts": {
+    "initdb": "./scripts/init-db.sh",
     "setup": "./scripts/dev-tomcat.sh",
     "dev": "node scripts/watch-dev.js",
     "watch": "npm run dev",
