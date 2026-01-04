@@ -2,8 +2,8 @@ package interfaces;
 
 import java.util.LinkedList;
 
-public interface GenericDAO<T> {
-    public T findById(String id);
+public interface GenericDAO<T, ID> {
+    public T findById(ID id);
 
     public LinkedList<T> findAll();
 
@@ -13,5 +13,5 @@ public interface GenericDAO<T> {
 
     public void delete(T entity);
 
-    public void deleteById(String id);
+    public void deleteById(ID id);
 }
