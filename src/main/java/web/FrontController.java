@@ -36,7 +36,9 @@ public class FrontController extends HttpServlet {
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
         if (path.equals("/") || path.equals("/index")) {
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            request.setAttribute("pageTitle", "Inicio");
+            request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
+            request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
         } else if (path.startsWith("/carrito")) {
             handleCarrito(request, response);
         } else if (path.startsWith("/auth")) {
@@ -60,46 +62,64 @@ public class FrontController extends HttpServlet {
 
     private void handleCarrito(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/carrito.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Carrito");
+        request.setAttribute("content", "/WEB-INF/views/pages/carrito.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleDroga(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/droga.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Compra de Drogas");
+        request.setAttribute("content", "/WEB-INF/views/pages/droga.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleUsuario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/usuarios.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Usuarios");
+        // request.setAttribute("content", "/WEB-INF/views/pages/usuarios.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/pages/usuarios.jsp").forward(request, response);
+        // request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleAuth(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/auth.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Autenticación");
+        request.setAttribute("content", "/WEB-INF/views/pages/auth.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleOnboarding(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/onboarding.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Onboarding");
+        request.setAttribute("content", "/WEB-INF/views/pages/onboarding.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleInventario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/inventario.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Inventario");
+        request.setAttribute("content", "/WEB-INF/views/pages/inventario.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handlePerfil(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/perfil.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Perfil");
+        request.setAttribute("content", "/WEB-INF/views/pages/perfil.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleAprobarCategorias(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/aprobarCategorias.jsp").forward(request, response);
+        request.setAttribute("pageTitle", "Aprobar Categorías");
+        request.setAttribute("content", "/WEB-INF/views/pages/aprobarCategorias.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleError(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("pageTitle", "404");
         request.getRequestDispatcher("/404.jsp").forward(request, response);
     }
 }
