@@ -16,97 +16,121 @@ public class UsuarioService implements GenericService<Usuario, String> {
 
     @Override
     public Usuario findById(String id) {
-        log.info("Buscando usuario por ID: " + id);
-        // Validaciones de negocio
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("El id del usuario no puede ser nulo o vacío");
-        }
-
         try {
-            Integer.parseInt(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("El id debe ser un número válido");
+            log.info("Buscando usuario por ID: " + id);
+            // Validaciones de negocio
+            if (id == null || id.trim().isEmpty()) {
+                throw new IllegalArgumentException("El id del usuario no puede ser nulo o vacío");
+            }
+
+            try {
+                Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("El id debe ser un número válido");
+            }
+
+            return usuarioDAO.findById(id);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-
-        return usuarioDAO.findById(id);
-
     }
 
     @Override
     public LinkedList<Usuario> findAll() {
-        log.info("Listando todos los usuarios");
-        return usuarioDAO.findAll();
+        try {
+            log.info("Listando todos los usuarios");
+            return usuarioDAO.findAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void save(Usuario usuario) {
-        log.info("Guardando usuario: " + usuario);
-        validateSaveUsuario(usuario);
+        try {
+            log.info("Guardando usuario: " + usuario);
+            validateSaveUsuario(usuario);
 
-        // Verifico si el usuario ya existe
-        if (usuario.getId() != null) {
-            Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
-            if (existingUsuario != null) {
-                throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " ya existe");
+            // Verifico si el usuario ya existe
+            if (usuario.getId() != null) {
+                Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
+                if (existingUsuario != null) {
+                    throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " ya existe");
+                }
             }
+
+            usuarioDAO.save(usuario);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-
-        usuarioDAO.save(usuario);
-
     }
 
     @Override
     public void update(Usuario usuario) {
-        log.info("Actualizando usuario: " + usuario);
-        if (usuario == null || usuario.getId() == null) {
-            throw new IllegalArgumentException("El usuario o el id del usuario no puede ser nulo");
-        }
+        try {
+            log.info("Actualizando usuario: " + usuario);
+            if (usuario == null || usuario.getId() == null) {
+                throw new IllegalArgumentException("El usuario o el id del usuario no puede ser nulo");
+            }
 
-        // Verifico si el usuario existe
-        Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
-        if (existingUsuario == null) {
-            throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " no existe");
-        }
+            // Verifico si el usuario existe
+            Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
+            if (existingUsuario == null) {
+                throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " no existe");
+            }
 
-        usuarioDAO.update(usuario);
+            usuarioDAO.update(usuario);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void delete(Usuario usuario) {
-        log.info("Eliminando usuario: " + usuario);
-        if (usuario == null || usuario.getId() == null) {
-            throw new IllegalArgumentException("El usuario o el id del usuario no puede ser nulo");
-        }
+        try {
+            log.info("Eliminando usuario: " + usuario);
+            if (usuario == null || usuario.getId() == null) {
+                throw new IllegalArgumentException("El usuario o el id del usuario no puede ser nulo");
+            }
 
-        // Verifico si el usuario existe
-        Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
-        if (existingUsuario == null) {
-            throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " no existe");
-        }
+            // Verifico si el usuario existe
+            Usuario existingUsuario = usuarioDAO.findById(usuario.getId().toString());
+            if (existingUsuario == null) {
+                throw new IllegalArgumentException("El usuario con id " + usuario.getId() + " no existe");
+            }
 
-        usuarioDAO.delete(usuario);
+            usuarioDAO.delete(usuario);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void deleteById(String id) {
-        log.info("Eliminando usuario por ID: " + id);
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("El id del usuario no puede ser nulo o vacío");
-        }
-
         try {
-            Integer.parseInt(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("El id debe ser un número válido");
-        }
+            log.info("Eliminando usuario por ID: " + id);
+            if (id == null || id.trim().isEmpty()) {
+                throw new IllegalArgumentException("El id del usuario no puede ser nulo o vacío");
+            }
 
-        // Verifico si el usuario existe
-        Usuario existingUsuario = usuarioDAO.findById(id);
-        if (existingUsuario == null) {
-            throw new IllegalArgumentException("El usuario con id " + id + " no existe");
-        }
+            try {
+                Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("El id debe ser un número válido");
+            }
 
-        usuarioDAO.deleteById(id);
+            // Verifico si el usuario existe
+            Usuario existingUsuario = usuarioDAO.findById(id);
+            if (existingUsuario == null) {
+                throw new IllegalArgumentException("El usuario con id " + id + " no existe");
+            }
+
+            usuarioDAO.deleteById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private void validateSaveUsuario(Usuario usuario) {

@@ -34,8 +34,8 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el stock");
         } finally {
             closeConnection();
         }
@@ -61,8 +61,8 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pueden listar los stocks");
         } finally {
             closeConnection();
         }
@@ -93,8 +93,8 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede guardar el stock");
         } finally {
             closeConnection();
         }
@@ -116,8 +116,8 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar el stock");
         } finally {
             closeConnection();
         }
@@ -140,8 +140,8 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede eliminar el stock");
         } finally {
             closeConnection();
         }

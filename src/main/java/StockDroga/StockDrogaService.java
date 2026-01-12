@@ -15,64 +15,89 @@ public class StockDrogaService implements GenericService<StockDroga, String> {
 
     @Override
     public StockDroga findById(String id) {
-        log.info("Buscando stock por ID: " + id);
-        ValidatorUtil.requireValidId(id);
-        return stockDAO.findById(id);
+        try {
+            log.info("Buscando stock por ID: " + id);
+            ValidatorUtil.requireValidId(id);
+            return stockDAO.findById(id);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public LinkedList<StockDroga> findAll() {
-        log.info("Listando todos los stocks de droga");
-        return stockDAO.findAll();
+        try {
+            log.info("Listando todos los stocks de droga");
+            return stockDAO.findAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void save(StockDroga stock) {
-        log.info("Guardando stock: " + stock);
-        validateStock(stock);
+        try {
+            log.info("Guardando stock: " + stock);
+            validateStock(stock);
 
-        if (stock.getId() != null && stockDAO.findById(stock.getId().toString()) != null) {
-            throw new IllegalArgumentException("El stock con id " + stock.getId() + " ya existe");
+            if (stock.getId() != null && stockDAO.findById(stock.getId().toString()) != null) {
+                throw new IllegalArgumentException("El stock con id " + stock.getId() + " ya existe");
+            }
+
+            stockDAO.save(stock);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-
-        stockDAO.save(stock);
     }
 
     @Override
     public void update(StockDroga stock) {
-        log.info("Actualizando stock: " + stock);
-        if (stock == null || stock.getId() == null) {
-            throw new IllegalArgumentException("El stock o su id no puede ser nulo");
-        }
-        validateStock(stock);
+        try {
+            log.info("Actualizando stock: " + stock);
+            if (stock == null || stock.getId() == null) {
+                throw new IllegalArgumentException("El stock o su id no puede ser nulo");
+            }
+            validateStock(stock);
 
-        if (stockDAO.findById(stock.getId().toString()) == null) {
-            throw new IllegalArgumentException("El stock con id " + stock.getId() + " no existe");
-        }
+            if (stockDAO.findById(stock.getId().toString()) == null) {
+                throw new IllegalArgumentException("El stock con id " + stock.getId() + " no existe");
+            }
 
-        stockDAO.update(stock);
+            stockDAO.update(stock);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void delete(StockDroga stock) {
-        log.info("Eliminando stock: " + stock);
-        if (stock == null || stock.getId() == null) {
-            throw new IllegalArgumentException("El stock o su id no puede ser nulo");
+        try {
+            log.info("Eliminando stock: " + stock);
+            if (stock == null || stock.getId() == null) {
+                throw new IllegalArgumentException("El stock o su id no puede ser nulo");
+            }
+            if (stockDAO.findById(stock.getId().toString()) == null) {
+                throw new IllegalArgumentException("El stock con id " + stock.getId() + " no existe");
+            }
+            stockDAO.delete(stock);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        if (stockDAO.findById(stock.getId().toString()) == null) {
-            throw new IllegalArgumentException("El stock con id " + stock.getId() + " no existe");
-        }
-        stockDAO.delete(stock);
     }
 
     @Override
     public void deleteById(String id) {
-        log.info("Eliminando stock por ID: " + id);
-        ValidatorUtil.requireValidId(id);
-        if (stockDAO.findById(id) == null) {
-            throw new IllegalArgumentException("El stock con id " + id + " no existe");
+        try {
+            log.info("Eliminando stock por ID: " + id);
+            ValidatorUtil.requireValidId(id);
+            if (stockDAO.findById(id) == null) {
+                throw new IllegalArgumentException("El stock con id " + id + " no existe");
+            }
+            stockDAO.deleteById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        stockDAO.deleteById(id);
     }
 
     private void validateStock(StockDroga stock) {

@@ -37,8 +37,8 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el usuario");
         } finally {
             closeConnection();
         }
@@ -69,8 +69,8 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pueden listar los usuarios");
         } finally {
             closeConnection();
         }
@@ -102,8 +102,8 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede guardar el usuario");
         } finally {
             closeConnection();
         }
@@ -126,8 +126,8 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar el usuario");
         } finally {
             closeConnection();
         }
@@ -150,8 +150,8 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede eliminar el usuario");
         } finally {
             closeConnection();
         }

@@ -13,88 +13,112 @@ public class ProveedorService implements GenericService<Proveedor, String> {
 
     @Override
     public Proveedor findById(String id) {
-        log.info("Buscando proveedor por ID: " + id);
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
-        }
         try {
-            Integer.parseInt(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("El id debe ser un número válido");
+            log.info("Buscando proveedor por ID: " + id);
+            if (id == null || id.trim().isEmpty()) {
+                throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
+            }
+            try {
+                Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("El id debe ser un número válido");
+            }
+            return proveedorDAO.findById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        return proveedorDAO.findById(id);
     }
 
     @Override
     public LinkedList<Proveedor> findAll() {
-        log.info("Listando todos los proveedores");
-        return proveedorDAO.findAll();
+        try {
+            log.info("Listando todos los proveedores");
+            return proveedorDAO.findAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void save(Proveedor proveedor) {
-        log.info("Guardando proveedor: " + proveedor);
-        validateProveedor(proveedor);
+        try {
+            log.info("Guardando proveedor: " + proveedor);
+            validateProveedor(proveedor);
 
-        if (proveedor.getId() != null) {
-            Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
-            if (existing != null) {
-                throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " ya existe");
+            if (proveedor.getId() != null) {
+                Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+                if (existing != null) {
+                    throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " ya existe");
+                }
             }
-        }
 
-        proveedorDAO.save(proveedor);
+            proveedorDAO.save(proveedor);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void update(Proveedor proveedor) {
-        log.info("Actualizando proveedor: " + proveedor);
-        if (proveedor == null || proveedor.getId() == null) {
-            throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
-        }
-        validateProveedor(proveedor);
+        try {
+            log.info("Actualizando proveedor: " + proveedor);
+            if (proveedor == null || proveedor.getId() == null) {
+                throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
+            }
+            validateProveedor(proveedor);
 
-        Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
-        if (existing == null) {
-            throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
-        }
+            Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+            if (existing == null) {
+                throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
+            }
 
-        proveedorDAO.update(proveedor);
+            proveedorDAO.update(proveedor);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void delete(Proveedor proveedor) {
-        log.info("Eliminando proveedor: " + proveedor);
-        if (proveedor == null || proveedor.getId() == null) {
-            throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
-        }
+        try {
+            log.info("Eliminando proveedor: " + proveedor);
+            if (proveedor == null || proveedor.getId() == null) {
+                throw new IllegalArgumentException("El proveedor o el id del proveedor no puede ser nulo");
+            }
 
-        Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
-        if (existing == null) {
-            throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
-        }
+            Proveedor existing = proveedorDAO.findById(proveedor.getId().toString());
+            if (existing == null) {
+                throw new IllegalArgumentException("El proveedor con id " + proveedor.getId() + " no existe");
+            }
 
-        proveedorDAO.delete(proveedor);
+            proveedorDAO.delete(proveedor);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void deleteById(String id) {
-        log.info("Eliminando proveedor por ID: " + id);
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
-        }
         try {
-            Integer.parseInt(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("El id debe ser un número válido");
-        }
+            log.info("Eliminando proveedor por ID: " + id);
+            if (id == null || id.trim().isEmpty()) {
+                throw new IllegalArgumentException("El id del proveedor no puede ser nulo o vacío");
+            }
+            try {
+                Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("El id debe ser un número válido");
+            }
 
-        Proveedor existing = proveedorDAO.findById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("El proveedor con id " + id + " no existe");
-        }
+            Proveedor existing = proveedorDAO.findById(id);
+            if (existing == null) {
+                throw new IllegalArgumentException("El proveedor con id " + id + " no existe");
+            }
 
-        proveedorDAO.deleteById(id);
+            proveedorDAO.deleteById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private void validateProveedor(Proveedor proveedor) {

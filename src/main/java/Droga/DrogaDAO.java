@@ -34,8 +34,8 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar la droga");
         } finally {
             closeConnection();
         }
@@ -61,8 +61,8 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pueden listar las drogas");
         } finally {
             closeConnection();
         }
@@ -93,8 +93,8 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede guardar la droga");
         } finally {
             closeConnection();
         }
@@ -117,8 +117,8 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar la droga");
         } finally {
             closeConnection();
         }
@@ -141,8 +141,8 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede eliminar la droga");
         } finally {
             closeConnection();
         }

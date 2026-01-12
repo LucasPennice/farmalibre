@@ -32,8 +32,8 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pudieron cargar la categoría.");
         } finally {
             closeConnection();
         }
@@ -57,9 +57,10 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
 
             rs.close();
             ps.close();
+            
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pudieron cargar las categorías.");
         } finally {
             closeConnection();
         }
@@ -86,8 +87,8 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede guardar la categoría");
         } finally {
             closeConnection();
         }
@@ -107,8 +108,8 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar la categoría");
         } finally {
             closeConnection();
         }
@@ -131,8 +132,8 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede borrar la categoria");
         } finally {
             closeConnection();
         }

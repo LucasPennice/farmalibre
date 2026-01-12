@@ -13,64 +13,88 @@ public class CategoriaDrogaService implements GenericService<CategoriaDroga, Str
 
     @Override
     public CategoriaDroga findById(String id) {
-        log.info("Buscando categoria_droga por ID: " + id);
-        ValidatorUtil.requireValidId(id);
-        return categoriaDAO.findById(id);
+        try {
+            log.info("Buscando categoria_droga por ID: " + id);
+            ValidatorUtil.requireValidId(id);
+            return categoriaDAO.findById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public LinkedList<CategoriaDroga> findAll() {
-        log.info("Listando todas las categorias_droga");
-        return categoriaDAO.findAll();
+        try {
+            log.info("Listando todas las categorias_droga");
+            return categoriaDAO.findAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void save(CategoriaDroga categoria) {
-        log.info("Guardando categoria_droga: " + categoria);
-        validateCategoria(categoria);
+        try {
+            log.info("Guardando categoria_droga: " + categoria);
+            validateCategoria(categoria);
 
-        if (categoria.getId() != null && categoriaDAO.findById(categoria.getId().toString()) != null) {
-            throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " ya existe");
+            if (categoria.getId() != null && categoriaDAO.findById(categoria.getId().toString()) != null) {
+                throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " ya existe");
+            }
+
+            categoriaDAO.save(categoria);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-
-        categoriaDAO.save(categoria);
     }
 
     @Override
     public void update(CategoriaDroga categoria) {
-        log.info("Actualizando categoria_droga: " + categoria);
-        if (categoria == null || categoria.getId() == null) {
-            throw new IllegalArgumentException("La categoría o su id no puede ser nula");
-        }
-        validateCategoria(categoria);
+        try {
+            log.info("Actualizando categoria_droga: " + categoria);
+            if (categoria == null || categoria.getId() == null) {
+                throw new IllegalArgumentException("La categoría o su id no puede ser nula");
+            }
+            validateCategoria(categoria);
 
-        if (categoriaDAO.findById(categoria.getId().toString()) == null) {
-            throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " no existe");
-        }
+            if (categoriaDAO.findById(categoria.getId().toString()) == null) {
+                throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " no existe");
+            }
 
-        categoriaDAO.update(categoria);
+            categoriaDAO.update(categoria);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public void delete(CategoriaDroga categoria) {
-        log.info("Eliminando categoria_droga: " + categoria);
-        if (categoria == null || categoria.getId() == null) {
-            throw new IllegalArgumentException("La categoría o su id no puede ser nula");
+        try {
+            log.info("Eliminando categoria_droga: " + categoria);
+            if (categoria == null || categoria.getId() == null) {
+                throw new IllegalArgumentException("La categoría o su id no puede ser nula");
+            }
+            if (categoriaDAO.findById(categoria.getId().toString()) == null) {
+                throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " no existe");
+            }
+            categoriaDAO.delete(categoria);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        if (categoriaDAO.findById(categoria.getId().toString()) == null) {
-            throw new IllegalArgumentException("La categoría con id " + categoria.getId() + " no existe");
-        }
-        categoriaDAO.delete(categoria);
     }
 
     @Override
     public void deleteById(String id) {
-        log.info("Eliminando categoria_droga por ID: " + id);
-        ValidatorUtil.requireValidId(id);
-        if (categoriaDAO.findById(id) == null) {
-            throw new IllegalArgumentException("La categoría con id " + id + " no existe");
+        try {
+            log.info("Eliminando categoria_droga por ID: " + id);
+            ValidatorUtil.requireValidId(id);
+            if (categoriaDAO.findById(id) == null) {
+                throw new IllegalArgumentException("La categoría con id " + id + " no existe");
+            }
+            categoriaDAO.deleteById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        categoriaDAO.deleteById(id);
     }
 
     private void validateCategoria(CategoriaDroga categoria) {

@@ -1,4 +1,5 @@
-<%@ page isELIgnored="false" %>
+<%@ page isELIgnored="false" %> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 
 <nav class="auth-container">
   <h1 class="brand">Farma<span>Libre</span></h1>
@@ -7,12 +8,9 @@
     <h3>Categorías</h3>
 
     <ul>
-      <li>Drogazepam</li>
-      <li>Trembolona</li>
-      <li>D-Bol</li>
-      <li>Testosterona</li>
-      <li class="active">Cocaína</li>
-      <li>Falopaína</li>
+      <c:forEach items="${categorias}" var="c">
+        <li>${c.nombre}</li>
+      </c:forEach>
     </ul>
   </div>
 

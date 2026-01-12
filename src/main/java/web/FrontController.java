@@ -4,11 +4,19 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
+import CategoriaDroga.CategoriaDroga;
+import CategoriaDroga.CategoriaDrogaService;
+import Droga.Droga;
+import Droga.DrogaService;
+import Proveedor.Proveedor;
+import Proveedor.ProveedorService;
+import StockDroga.StockDroga;
+import StockDroga.StockDrogaService;
 import db.DatabaseInitializer;
 
 public class FrontController extends HttpServlet {
-
     @Override
     public void init() throws ServletException {
         super.init();
@@ -42,6 +50,62 @@ public class FrontController extends HttpServlet {
                 .forward(request, response);
             return;
         }
+
+    LinkedList<String> errores = new LinkedList<String>();
+
+    // Fetch de CategoriaDroga con error handling
+
+    CategoriaDrogaService categoriaDrogaService;
+    LinkedList<CategoriaDroga> categorias = new LinkedList<CategoriaDroga>();
+    
+    try {
+        categoriaDrogaService = new CategoriaDrogaService();
+        categorias.addAll(categoriaDrogaService.findAll());
+        request.setAttribute("categorias", categorias);
+    } catch (Exception e) {
+        errores.add(e.getMessage());
+    }
+
+    // Fetch de Drogas con error handling
+    
+    DrogaService drogaService;
+    LinkedList<Droga> drogas = new LinkedList<Droga>();
+    
+    try {
+        drogaService = new DrogaService();
+        drogas.addAll(drogaService.findAll());
+        request.setAttribute("drogas", drogas);
+    } catch (Exception e) {
+        errores.add(e.getMessage());
+    }
+
+    // Fetch de Drogas con error handling
+    
+    ProveedorService proveedorService;
+    LinkedList<Proveedor> proveedores = new LinkedList<Proveedor>();
+    
+    try {
+        proveedorService = new ProveedorService();
+        proveedores.addAll(proveedorService.findAll());
+        request.setAttribute("proveedores", proveedores);
+    } catch (Exception e) {
+        errores.add(e.getMessage());
+    }
+
+    // Fetch de Drogas con error handling
+    
+    StockDrogaService stockDrogaService;
+    LinkedList<StockDroga> stockDrogas = new LinkedList<StockDroga>();
+    
+    try {
+        stockDrogaService = new StockDrogaService();
+        stockDrogas.addAll(stockDrogaService.findAll());
+        request.setAttribute("stockDrogas", stockDrogas);
+    } catch (Exception e) {
+        errores.add(e.getMessage());
+    }
+
+    request.setAttribute("errores", errores);
 
         if (path.equals("/") || path.equals("/index")) {
             request.setAttribute("pageTitle", "Inicio");
@@ -119,6 +183,8 @@ public class FrontController extends HttpServlet {
 
     private void handleAprobarCategorias(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        
         request.setAttribute("pageTitle", "Aprobar Categorías");
         request.setAttribute("content", "/WEB-INF/views/pages/aprobarCategorias.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);

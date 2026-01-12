@@ -65,3 +65,37 @@
   color: #777;
   text-decoration: none;
 }
+
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+.toast-error {
+  background: #e74c3c;
+  color: white;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadein 0.4s, fadeout 0.4s 3.6s;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

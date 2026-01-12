@@ -37,8 +37,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el proveedor");
         } finally {
             closeConnection();
         }
@@ -69,8 +69,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             rs.close();
             ps.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pueden listar los proveedores");
         } finally {
             closeConnection();
         }
@@ -102,8 +102,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             ps.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede guardar el proveedor");
         } finally {
             closeConnection();
         }
@@ -125,8 +125,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar el proveedor");
         } finally {
             closeConnection();
         }
@@ -149,8 +149,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            log.severe("Ha ocurrido un error debido a: " + e.getMessage());
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede eliminar el proveedor");
         } finally {
             closeConnection();
         }
