@@ -8,9 +8,10 @@
     "watch": "npm run dev",
     "compile": "mvn compile -DskipTests",
     "quick": "./scripts/restart.sh",
-    "refreshweb": "pnpm run compile & pnpm run deploy",
+    "refreshweb": "pnpm run compile & pnpm run deploy:skiptest",
     "deploy": "mvn clean package && cp target/*.war $CATALINA_HOME/webapps/",
-    "refresh":"npm run compile & npm run deploy",
+    "deploy:skiptest": "mvn clean package -DskipTests && cp target/*.war $CATALINA_HOME/webapps/",
+    "refresh": "npm run compile & npm run deploy",
     "tomcat:start": "dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
     "tomcat:stop": "$CATALINA_HOME/bin/shutdown.sh",
     "tomcat:restart": "$CATALINA_HOME/bin/shutdown.sh && sleep 2 && dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh"

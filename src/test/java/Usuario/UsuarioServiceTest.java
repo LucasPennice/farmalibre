@@ -24,7 +24,7 @@ public class UsuarioServiceTest {
     void setUp() {
         usuarioService = new UsuarioService();
         // Crear usuario de prueba para tests que lo necesiten
-        usuarioTest = new Usuario(null, "Test", "test@test.com", null, Rol.USUARIO);
+        usuarioTest = new Usuario(null, "Test", "test@test.com", null, Rol.USUARIO, "username", "pass");
     }
 
     @AfterEach

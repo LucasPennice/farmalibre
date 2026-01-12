@@ -4,18 +4,23 @@ public class Usuario {
     private Integer id;
     private String nombreCompletoRes;
     private String direccion;
+    private String nombreUsuario;
+    @SuppressWarnings("unused")
+    private String passEncriptada;
     private byte[] foto_perfil;
     private Rol rol;
 
     public Usuario() {
     }
 
-    public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol) {
+    public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol, String nombreUsuario, String passEncriptada) {
         this.id = id;
         this.nombreCompletoRes = NombreCompletoRes;
         this.direccion = direccion;
         this.foto_perfil = foto_perfil;
         this.rol = rol;
+        this.nombreUsuario = nombreUsuario;
+        this.passEncriptada = passEncriptada;
     }
 
     public Integer getId() {
@@ -56,5 +61,9 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 }
