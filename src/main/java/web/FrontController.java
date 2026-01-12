@@ -35,6 +35,14 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
+        if (path.startsWith("/assets/")) {
+            // Delegate static resources to the container's default servlet
+            getServletContext()
+                .getNamedDispatcher("default")
+                .forward(request, response);
+            return;
+        }
+
         if (path.equals("/") || path.equals("/index")) {
             request.setAttribute("pageTitle", "Inicio");
             request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
@@ -77,9 +85,8 @@ public class FrontController extends HttpServlet {
     private void handleUsuario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Usuarios");
-        // request.setAttribute("content", "/WEB-INF/views/pages/usuarios.jsp");
-        request.getRequestDispatcher("/WEB-INF/views/pages/usuarios.jsp").forward(request, response);
-        // request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+        request.setAttribute("content", "/WEB-INF/views/pages/usuarios.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
     private void handleAuth(HttpServletRequest request, HttpServletResponse response)

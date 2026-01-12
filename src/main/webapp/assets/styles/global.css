@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+*,
+*::before,
+*::after {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.auth-container {
+  width: 250px;
+}
+
+.brand {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.brand span {
+  text-decoration: underline;
+}
+
+.categories h3 {
+  margin-top: 32px;
+  color: #777;
+  font-weight: 500;
+}
+
+.categories ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 32px;
+}
+
+.categories li {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.categories li.active {
+  background: #2f5cff;
+  color: white;
+}
+
+.auth-actions {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f3f3f3;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.register-link {
+  display: block;
+  margin-top: 14px;
+  color: #777;
+  text-decoration: none;
+}

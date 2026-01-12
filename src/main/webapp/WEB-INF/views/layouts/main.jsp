@@ -1,18 +1,19 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page isELIgnored="false" %> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <html>
   <head>
-    <title>Holas</title>
-    <!-- <title>${pageTitle}</title> -->
+    <title>${pageTitle}</title>
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/assets/styles/global.css"
+    />
   </head>
-  <body>
-    <!-- <jsp:include page="/WEB-INF/views/fragments/navbar.jsp" /> -->
+  <body style="display: flex; margin: 0">
+    <!-- Navbar (componente) -->
+    <jsp:include page="/WEB-INF/views/fragments/navbar.jsp" />
 
     <div class="content">
-      <h1>Main</h1>
-      <!-- <jsp:include page="${content}" /> -->
+      <jsp:include page="${content}" />
     </div>
-
-    <!-- <jsp:include page="/WEB-INF/views/fragments/footer.jsp" /> -->
   </body>
 </html>
