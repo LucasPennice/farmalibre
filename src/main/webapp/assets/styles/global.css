@@ -7,10 +7,6 @@
     Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
-.auth-container {
-  width: 250px;
-}
-
 .brand {
   font-size: 32px;
   font-weight: 700;
@@ -98,4 +94,236 @@
   to {
     opacity: 0;
   }
+}
+
+.navbar {
+  padding: 32;
+  width: 250px;
+  border-right: 4px solid #f8f8f8;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  width: 110px;
+  height: 25px;
+  margin-bottom: 92px;
+}
+
+.accion_rapida_icono {
+  width: 10px;
+  height: 10px;
+}
+
+.contenedor_acciones_rapidas_icono {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.contenedor_categorias {
+  display: flex;
+  flex-direction: column;
+}
+
+.contenedor_categorias > h1 {
+  font-weight: 500;
+  font-size: 14;
+  color: #666666;
+}
+
+.categoria-link {
+  all: unset;
+  width: 185px;
+  height: 35px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14;
+  color: #666666;
+  padding-left: 19;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.categoria-link-activo {
+  background-color: #2763fd;
+  color: white;
+}
+
+.contenedor_acciones_rapidas {
+  all: unset;
+  font-weight: 500;
+  font-size: 14;
+  color: #666666;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.aprobar_categorias_pendientes_bubble {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  border-radius: 40px;
+  width: 20px;
+  height: 20px;
+  background-color: #2763fd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+  font-size: 14;
+}
+
+/* MAIN.JSP */
+
+.content {
+  width: 100%;
+  padding: 24px;
+}
+
+/* INDEX.JSP */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.search-wrapper {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding-left: 19px;
+  border: none;
+  background: #f2f2f2;
+  height: 100%;
+  font-size: 15px;
+  outline: none;
+}
+
+.cart {
+  position: relative;
+  width: 53px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.badge {
+  width: 20px !important;
+  height: 20px !important;
+  position: absolute;
+  top: -22px;
+  right: -4px;
+  background: #2763fd;
+  color: white;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+}
+
+.foto_farmacia {
+  width: 42px;
+  height: 42px;
+  border-radius: 42px;
+  background-color: #e4fcd9;
+}
+
+.foto_farmacia > img {
+}
+
+.farmacia_nombre {
+  color: #4d4d4d;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 150px;
+}
+
+.drogas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.droga-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  gap: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+}
+
+.droga-main {
+  flex: 1;
+}
+
+.formula {
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.formula span {
+  font-size: 24px;
+  vertical-align: baseline;
+}
+
+.nombre {
+  font-size: 16px;
+  color: #444;
+  margin-top: 6px;
+}
+
+.meta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #888;
+}
+
+.droga-info {
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proveedor {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.precio-final {
+  align-self: flex-end;
+  background: #111;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
 }

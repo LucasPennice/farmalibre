@@ -79,7 +79,7 @@ public class FrontController extends HttpServlet {
         errores.add(e.getMessage());
     }
 
-    // Fetch de Drogas con error handling
+    // Fetch de Proveedores con error handling
     
     ProveedorService proveedorService;
     LinkedList<Proveedor> proveedores = new LinkedList<Proveedor>();
@@ -92,7 +92,7 @@ public class FrontController extends HttpServlet {
         errores.add(e.getMessage());
     }
 
-    // Fetch de Drogas con error handling
+    // Fetch de Stock Drogas con error handling
     
     StockDrogaService stockDrogaService;
     LinkedList<StockDroga> stockDrogas = new LinkedList<StockDroga>();
@@ -108,9 +108,7 @@ public class FrontController extends HttpServlet {
     request.setAttribute("errores", errores);
 
         if (path.equals("/") || path.equals("/index")) {
-            request.setAttribute("pageTitle", "Inicio");
-            request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
-            request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+            handleHomepage(request, response);
         } else if (path.startsWith("/carrito")) {
             handleCarrito(request, response);
         } else if (path.startsWith("/auth")) {
@@ -194,5 +192,13 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "404");
         request.getRequestDispatcher("/404.jsp").forward(request, response);
+    }
+    
+    
+    private void handleHomepage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Inicio");
+        request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 }
