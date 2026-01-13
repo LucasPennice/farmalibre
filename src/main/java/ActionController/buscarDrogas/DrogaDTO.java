@@ -6,18 +6,17 @@ import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 
 import java.util.List;
-import java.util.Map;
-
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class DrogaDTO {
     private final String nombre;
     private final String formula;
     private final String categoria;
+    private final String unidad;
+    private final int idDroga;
     private final int stockTotal;
-    private final int cantProveedores;
-    private final Map<Integer, ProveedorInfo> proveedores;
+    private final int cantidadProveedores;
+    private final  LinkedList<ProveedorInfo> proveedores;
 
     public DrogaDTO(Droga droga) {
         StockDrogaService stockDrogaService = new StockDrogaService();
@@ -28,17 +27,27 @@ public class DrogaDTO {
 
             if(stocksDroga == null) throw new RuntimeException("No se encontró el stock");
 
-            this.proveedores = new HashMap<>();
+            this.proveedores = new LinkedList<>();
             this.nombre = droga.getNombre();
             this.formula = droga.getComposicion();
             this.categoria = droga.getCategoriaDroga().getNombre();
             this.stockTotal = calcularStockTotalDisponible(stocksDroga);
-            this.cantProveedores = stocksDroga.size();
+            this.cantidadProveedores = stocksDroga.size();
+            this.unidad = droga.getUnidad();
+            this.idDroga = droga.getId();
 
+            stocksDroga.sort((a, b) -> Double.compare( b.getPrecioUnitario(),a.getPrecioUnitario()));
             for (StockDroga stockDroga : stocksDroga) {
                 Proveedor proveedor = stockDroga.getProveedor();
-                this.proveedores.put(proveedor.getId(), new ProveedorInfo(proveedor.getNombreFantasia(), stockDroga.getPrecioUnitario()));
+
+                if(proveedor == null ) throw new RuntimeException("No existe proveedor para el stock");
+
+                this.proveedores.add(new ProveedorInfo(proveedor.getId(), proveedor.getNombreFantasia(), stockDroga.getPrecioUnitario()));
+
+                // ESTO DA NULL.
+                System.out.println("AAAAAAA"  + proveedor.getNombreFantasia());            
             }
+
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -58,23 +67,25 @@ public class DrogaDTO {
     public String getNombre() { return nombre; }
     public String getFormula() { return formula; }
     public String getCategoria() { return categoria; }
+    public String getUnidad() { return unidad; }
+    public int getIdDroga() { return idDroga; }
     public int getStockTotal() { return stockTotal; }
-    public double getCantidadProveedores() { return cantProveedores; }
-
-    public Map<Integer, ProveedorInfo> getProveedores() {
-        return proveedores;
-    }
+    public LinkedList<ProveedorInfo> getProveedores() { return proveedores; }
+    public double getCantidadProveedores() { return cantidadProveedores; }
 
     public static class ProveedorInfo {
+        private final Integer idProveedor;
         private final String nombre;
         private final double precioUnitario;
 
-        public ProveedorInfo(String nombre, double precioUnitario) {
+        public ProveedorInfo(Integer idProveedor, String nombre, double precioUnitario) {
+            this.idProveedor = idProveedor;
             this.nombre = nombre;
             this.precioUnitario = precioUnitario;
         }
 
         public String getNombre() { return nombre; }
+        public Integer geIdProveedor() { return idProveedor; }
         public double getPrecioUnitario() { return precioUnitario; }
     }
 }

@@ -23,15 +23,40 @@
     <p class="farmacia_nombre">Droguería San Marcos</p>
   </div>
 
-  <div class="drogas-grid">
+  <div class="drogas_list_container">
     <c:forEach var="d" items="${drogaDTOs}">
-      <div class="droga-card">
-        <div class="droga-main">
-          <div class="formula">${d.formula}<span>2</span></div>
-
-          <div class="nombre">${d.nombre}</div>
+      <a href="/farmalibre/comprar-droga?drogaId=${d.idDroga}" class="drogas_container">
+        <div class="drogas_left_container">
+          <h1>${d.formula}</h1>
+          <h2>${d.nombre}</h2>
+          <div>
+            <p>${d.stockTotal} ${d.unidad}</p>
+            <p>${d.cantidadProveedores} Proveedores</p>
+          </div>
         </div>
-      </div>
+
+        <div class="drogas_right_container">
+          <c:forEach var="entry" items="${d.proveedores}" varStatus="status">
+            
+              <c:choose>
+                  <c:when test="${status.last}">
+                      <div class="mejor_proveedor_contenedor">
+                          <p>${entry.nombre}</p>
+                          <p>$${entry.precioUnitario}</p>
+                      </div>
+                  </c:when>
+
+                  <c:otherwise>
+                      <div class="proveedor_item">
+                          <p>${entry.nombre}</p>
+                          <p>$${entry.precioUnitario}</p>
+                      </div>
+                  </c:otherwise>
+              </c:choose>
+
+          </c:forEach>
+        </div>
+      </a>
     </c:forEach>
   </div>
 </div>

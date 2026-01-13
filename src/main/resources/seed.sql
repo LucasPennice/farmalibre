@@ -22,12 +22,12 @@ ALTER TABLE categoria_droga AUTO_INCREMENT = 6;
 -- DROGAS
 -- =========================
 INSERT INTO droga (nombre, composicion, unidad, categoria_id) VALUES
-('Paracetamol', 'Acetaminofén 500mg', 'Comprimido', 1),
-('Ibuprofeno', 'Ibuprofeno 400mg', 'Comprimido', 1),
-('Amoxicilina', 'Amoxicilina 500mg', 'Cápsula', 2),
-('Testosterona', 'Testosterona enantato', 'Ampolla', 3),
-('Diazepam', 'Diazepam 10mg', 'Comprimido', 4),
-('Nandrolona', 'Nandrolona decanoato', 'Ampolla', 5);
+('Paracetamol', 'C8H9NO2', 'Comprimido', 1),
+('Ibuprofeno', 'C13H18O2', 'Comprimido', 1),
+('Amoxicilina', 'C16H19N3O5S', 'Cápsula', 2),
+('Testosterona', 'C19H28O2', 'Ampolla', 3),
+('Diazepam', 'C16H13ClN2O', 'Comprimido', 4),
+('Nandrolona', 'C18H26O2', 'Ampolla', 5);
 
 -- =========================
 -- PROVEEDORES
@@ -41,12 +41,31 @@ INSERT INTO proveedor (razon_social, nombre_fantasia, cuit, tipo_persona) VALUES
 -- STOCK PROVEEDOR - DROGA
 -- =========================
 INSERT INTO stock_droga_proveedor (droga_id, proveedor_id, disponible, precio_unitario) VALUES
+-- Paracetamol
 (1, 1, 500, 120.50),
+(1, 2, 200, 118.00),
+(1, 3, 100, 125.00),
+
+-- Ibuprofeno
 (2, 1, 300, 180.00),
+(2, 2, 150, 175.00),
+
+-- Amoxicilina
+(3, 1, 120, 980.00),
 (3, 2, 200, 950.00),
+(3, 3, 80, 1020.00),
+
+-- Testosterona
+(4, 1, 90, 5400.00),
 (4, 2, 100, 5200.00),
+
+-- Diazepam
+(5, 2, 60, 4500.00),
 (5, 3, 80, 4300.00),
-(6, 1, 60, 6700.00);
+
+-- Nandrolona
+(6, 1, 60, 6700.00),
+(6, 2, 40, 6600.00);
 
 -- =========================
 -- USUARIOS

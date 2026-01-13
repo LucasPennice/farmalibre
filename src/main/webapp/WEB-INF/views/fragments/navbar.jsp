@@ -2,7 +2,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <nav class="navbar">
-  <img src="assets/images/Logo.png" class="logo" />
+  <a href="/farmalibre">
+    <img src="assets/images/Logo.png" class="logo" />
+  </a>
 
   <div class="contenedor_categorias">
     <h1>Categorías</h1>
