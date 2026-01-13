@@ -6,6 +6,8 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import ActionController.buscarDrogas.BuscarDrogasController;
+import ActionController.buscarDrogas.DrogaDTO;
 import CategoriaDroga.CategoriaDroga;
 import CategoriaDroga.CategoriaDrogaService;
 import Droga.Droga;
@@ -108,7 +110,7 @@ public class FrontController extends HttpServlet {
     request.setAttribute("errores", errores);
 
         if (path.equals("/") || path.equals("/index")) {
-            handleHomepage(request, response);
+            handleHomepage(request, response, drogas);
         } else if (path.startsWith("/carrito")) {
             handleCarrito(request, response);
         } else if (path.startsWith("/auth")) {
@@ -195,8 +197,11 @@ public class FrontController extends HttpServlet {
     }
     
     
-    private void handleHomepage(HttpServletRequest request, HttpServletResponse response)
+    private void handleHomepage(HttpServletRequest request, HttpServletResponse response, LinkedList<Droga> drogas)
             throws ServletException, IOException {
+        LinkedList<DrogaDTO> drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, null,null,null);
+        request.setAttribute("drogaDTOs", drogaDTOs);
+
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);

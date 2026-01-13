@@ -25,6 +25,38 @@ public class StockDrogaService implements GenericService<StockDroga, String> {
         }
     }
 
+    public StockDroga findByProveedorAndDroga(Proveedor proveedor, Droga droga) {
+    // Por reglas de negocio solo existe un stock por par de proveedor y droga
+
+        try {
+            log.info("Buscando stock por ID prov y droga: " + proveedor.getId() + "" + droga.getId());
+            return stockDAO.findByProveedorAndDroga(proveedor.getId(),droga.getId());
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public LinkedList<StockDroga> findByProveedor(Proveedor proveedor) {
+        try {
+            log.info("Buscando stock por ID proveedor: " + proveedor.getId());
+            return stockDAO.findByProveedor(proveedor.getId());
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public LinkedList<StockDroga> findByDroga(Droga droga) {
+        try {
+            log.info("Buscando stock por ID droga: " + droga.getId());
+            return stockDAO.findByDroga(droga.getId());
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @Override
     public LinkedList<StockDroga> findAll() {
         try {

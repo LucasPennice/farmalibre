@@ -22,4 +22,16 @@
 
     <p class="farmacia_nombre">Droguería San Marcos</p>
   </div>
+
+  <div class="drogas-grid">
+    <c:forEach var="d" items="${drogaDTOs}">
+      <div class="droga-card">
+        <div class="droga-main">
+          <div class="formula">${d.formula}<span>2</span></div>
+
+          <div class="nombre">${d.nombre}</div>
+        </div>
+      </div>
+    </c:forEach>
+  </div>
 </div>

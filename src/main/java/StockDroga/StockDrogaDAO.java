@@ -43,6 +43,93 @@ public class StockDrogaDAO extends AbstractDAO implements GenericDAO<StockDroga,
         return stock;
     }
 
+    public StockDroga findByProveedorAndDroga(Integer proveedorId, Integer drogaId) {
+        // Por reglas de negocio solo existe un stock por par de proveedor y droga
+        log.info("Finding stock_by_droga_and_proveedor: " + proveedorId + drogaId);
+        StockDroga stock = null;
+        String sql = "SELECT * FROM stock_droga_proveedor WHERE droga_id = ? AND proveedor_id = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, drogaId);
+            ps.setInt(2, proveedorId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                stock = mapStock(rs);
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el stock");
+        } finally {
+            closeConnection();
+        }
+
+        return stock;
+    }
+
+    public LinkedList<StockDroga> findByProveedor(Integer proveedorId) {
+        // Por reglas de negocio solo existe un stock por par de proveedor y droga
+        log.info("Finding stock_by_proveedor: " + proveedorId );
+        LinkedList<StockDroga> stocks = new LinkedList<>();
+        String sql = "SELECT * FROM stock_droga_proveedor WHERE proveedor_id = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, proveedorId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                stocks.add(mapStock(rs));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el stock");
+        } finally {
+            closeConnection();
+        }
+
+        return stocks;
+    }
+
+    public LinkedList<StockDroga> findByDroga(Integer drogaId) {
+        // Por reglas de negocio solo existe un stock por par de proveedor y droga
+        log.info("Finding stock_by_droga: " + drogaId );
+        LinkedList<StockDroga> stocks = new LinkedList<>();
+        String sql = "SELECT * FROM stock_droga_proveedor WHERE droga_id = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, drogaId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                stocks.add(mapStock(rs));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el stock");
+        } finally {
+            closeConnection();
+        }
+
+        return stocks;
+    }
+
     @Override
     public LinkedList<StockDroga> findAll() {
         log.info("Finding all stock_droga_proveedor");
