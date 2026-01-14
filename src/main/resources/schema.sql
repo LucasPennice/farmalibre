@@ -23,14 +23,30 @@ CREATE TABLE IF NOT EXISTS droga (
 );
 
 -- =========================
+-- USUARIO
+-- =========================
+CREATE TABLE IF NOT EXISTS usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo_responsable VARCHAR(150) NOT NULL,
+    nombreUsuario VARCHAR(150) NOT NULL,
+    passEncriptada VARCHAR(150) NOT NULL,
+    direccion VARCHAR(200),
+    foto_perfil MEDIUMBLOB,
+    rol ENUM('USUARIO', 'ADMIN') NOT NULL
+);
+
+
+-- =========================
 -- PROVEEDOR
 -- =========================
 CREATE TABLE IF NOT EXISTS proveedor (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
     razon_social VARCHAR(150) NOT NULL,
     nombre_fantasia VARCHAR(150),
     cuit VARCHAR(20) NOT NULL UNIQUE,
-    tipo_persona ENUM('FISICA', 'JURIDICA') NOT NULL
+    tipo_persona ENUM('FISICA', 'JURIDICA') NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
 -- =========================
@@ -47,15 +63,3 @@ CREATE TABLE IF NOT EXISTS stock_droga_proveedor (
     UNIQUE (droga_id, proveedor_id)
 );
 
--- =========================
--- USUARIO
--- =========================
-CREATE TABLE IF NOT EXISTS usuario (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo_responsable VARCHAR(150) NOT NULL,
-    nombreUsuario VARCHAR(150) NOT NULL,
-    passEncriptada VARCHAR(150) NOT NULL,
-    direccion VARCHAR(200),
-    foto_perfil MEDIUMBLOB,
-    rol ENUM('USUARIO', 'ADMIN') NOT NULL
-);
