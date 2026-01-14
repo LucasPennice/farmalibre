@@ -4,7 +4,7 @@
 <div>
   <div class="topbar">
     <div class="search-wrapper">
-      <img src="assets/images/lupa.png" />
+      <img src="${pageContext.request.contextPath}/assets/images/lupa.png" />
       <input
         type="text"
         placeholder="Buscar droga por nombre, composición, o categoría"
@@ -12,7 +12,7 @@
     </div>
 
     <a href="/farmalibre/carrito" class="cart">
-      <img src="assets/images/carrito.png" />
+      <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />
       <p class="badge">5</p>
     </a>
 

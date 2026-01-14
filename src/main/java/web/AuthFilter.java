@@ -15,8 +15,6 @@ public class AuthFilter implements Filter {
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        System.out.println("AAAAA entre aca");
-
         boolean isPrivate =
             path.startsWith("/carrito") ||
             path.startsWith("/inventario") ||

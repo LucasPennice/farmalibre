@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo_responsable VARCHAR(150) NOT NULL,
     nombreUsuario VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
     passEncriptada VARCHAR(150) NOT NULL,
     direccion VARCHAR(200),
     foto_perfil MEDIUMBLOB,

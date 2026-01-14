@@ -3,7 +3,7 @@
 
 <nav class="navbar">
   <a href="/farmalibre">
-    <img src="assets/images/Logo.png" class="logo" />
+    <img src="${pageContext.request.contextPath}/assets/images/Logo.png" class="logo" />
   </a>
 
   <div class="contenedor_categorias">
@@ -27,7 +27,7 @@
 
     <a href="" class="contenedor_acciones_rapidas">
       <div class="contenedor_acciones_rapidas_icono">
-        <img src="assets/images/acciones.png" class="accion_rapida_icono" />
+        <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
       </div>
 
       <p>Hacerme Proveedor</p>

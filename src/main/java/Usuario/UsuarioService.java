@@ -149,7 +149,7 @@ public class UsuarioService implements GenericService<Usuario, String> {
 
         // Verifico que no exista otro usuario con el mismo email (nombreUsuario)
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        Usuario existente = usuarioDAO.findByNombreUsuario(email);
+        Usuario existente = usuarioDAO.findByNombreUsuario(nombreCompleto);
         
         if (existente != null) {
             throw new IllegalArgumentException("Ya existe un usuario registrado con ese nombre de usuario");
@@ -157,7 +157,8 @@ public class UsuarioService implements GenericService<Usuario, String> {
 
         Usuario nuevo = new Usuario();
         nuevo.setNombreCompletoRes(nombreCompleto);
-        nuevo.setNombreUsuario(email);
+        nuevo.setNombreUsuario(nombreCompleto);
+        nuevo.setEmail(email);
         nuevo.setPassEncriptada(hashPassword(password));
         nuevo.setRol(Rol.USUARIO);
         nuevo.setOnboarding_completo(false);
@@ -165,6 +166,30 @@ public class UsuarioService implements GenericService<Usuario, String> {
         usuarioDAO.save(nuevo);
 
         return nuevo;
+    }
+
+    static public Usuario autenticar(String nombreCompleto, String email, String password){
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("El email no puede ser vacío");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("La contraseña no puede ser vacía");
+        }
+
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        Usuario usuario = usuarioDAO.findByNombreUsuario(nombreCompleto);
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario o contraseña incorrectos");
+        }
+
+        String passwordHasheada = hashPassword(password);
+
+        if (!passwordHasheada.equals(usuario.getPassEncriptada())) {
+            throw new IllegalArgumentException("Usuario o contraseña incorrectos");
+        }
+
+        return usuario;
     }
 
 

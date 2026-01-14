@@ -4,6 +4,9 @@ public class Usuario {
     private Integer id;
     private String nombreCompletoRes;
     private String direccion;
+    private String email;
+  
+
     private String nombreUsuario;
     @SuppressWarnings("unused")
     private String passEncriptada;
@@ -87,5 +90,13 @@ public class Usuario {
 
     public void setOnboarding_completo(Boolean onboarding_completo) {
         this.onboarding_completo = onboarding_completo;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

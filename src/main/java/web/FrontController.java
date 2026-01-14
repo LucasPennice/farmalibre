@@ -125,17 +125,17 @@ public class FrontController extends HttpServlet {
 
         try {
             UsuarioService.registrar(nombre, email, password);
+
+            // Redirige a url de autenticar
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
-        }finally{
-            // Redirige a homepage
             handleHomepage(request,response,drogas);
         }
     }
 
     if(path.startsWith("/auth/login")){
-        
+        // si anda redirige a index
     }
 
     
