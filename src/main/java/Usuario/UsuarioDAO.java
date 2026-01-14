@@ -66,6 +66,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setRol(Rol.valueOf(rs.getString("rol")));
                 usuario.setNombreUsuario((rs.getString("nombreUsuario")));
                 usuario.setPassEncriptada((rs.getString("passEncriptada")));
+                usuario.setEmail(rs.getString("email"));
                 usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
             }
 
@@ -96,6 +97,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setId(rs.getInt("id"));
                 usuario.setNombreCompletoRes(rs.getString("nombre_completo_responsable"));
                 usuario.setDireccion(rs.getString("direccion"));
+                usuario.setEmail(rs.getString("email"));
                 usuario.setFoto_perfil(rs.getBytes("foto_perfil"));
                 usuario.setRol(Rol.valueOf(rs.getString("rol"))); // ✅ Convertir String a Enum
                 usuarios.add(usuario);
@@ -115,7 +117,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
     @Override
     public void save(Usuario usuario) {
         log.info("Saving user");
-        String sql = "INSERT INTO usuario (nombre_completo_responsable, direccion, foto_perfil, rol, nombreUsuario, passEncriptada, onboarding_completo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuario (nombre_completo_responsable, direccion, foto_perfil, rol, nombreUsuario, passEncriptada, onboarding_completo, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             startConnection();
@@ -127,6 +129,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.setString(5, usuario.getNombreUsuario());
             ps.setString(6, usuario.getPassEncriptada());
             ps.setBoolean(7, usuario.getOnboarding_completo());
+            ps.setString(5, usuario.getEmail());
 
             ps.executeUpdate();
 
