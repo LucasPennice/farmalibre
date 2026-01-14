@@ -40,16 +40,17 @@
             
               <c:choose>
                   <c:when test="${status.last}">
+                        
                       <div class="mejor_proveedor_contenedor">
-                          <p>${entry.nombre}</p>
-                          <p>$${entry.precioUnitario}</p>
+                          <p class="mejor_proveedor_nombre">${entry.nombre}</p>
+                          <p class="mejor_proveedor_precio">$${entry.precioUnitario}</p>
                       </div>
                   </c:when>
 
                   <c:otherwise>
                       <div class="proveedor_item">
-                          <p>${entry.nombre}</p>
-                          <p>$${entry.precioUnitario}</p>
+                          <p class="proveedor_nombre">${entry.nombre}</p>
+                          <p class="proveedor_precio">$${entry.precioUnitario}</p>
                       </div>
                   </c:otherwise>
               </c:choose>

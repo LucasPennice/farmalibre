@@ -327,5 +327,50 @@
   font-size: 12px;
 }
 
+.drogas_right_container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+}
+
 .mejor_proveedor_contenedor {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mejor_proveedor_nombre {
+  font-size: 13px;
+  color: #999999;
+  font-weight: 600;
+}
+
+.mejor_proveedor_precio {
+  font-size: 12px;
+  background-color: #0B1113;
+  color: white;
+  padding: 12px;
+  border-radius: 17px;
+  margin-left: 30px;
+}
+
+.proveedor_item {
+  font-size: 12px;
+  color: #999999;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.proveedor_nombre {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.proveedor_precio{
+  margin-left:26px
 }
