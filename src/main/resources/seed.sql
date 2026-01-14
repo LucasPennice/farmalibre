@@ -35,7 +35,7 @@ INSERT INTO droga (nombre, composicion, unidad, categoria_id) VALUES
 INSERT INTO proveedor (razon_social, nombre_fantasia, cuit, tipo_persona) VALUES
 ('Laboratorios Delta SA', 'Delta Pharma', '30-12345678-9', 'JURIDICA'),
 ('Farmacéutica Río', 'Río Salud', '30-98765432-1', 'JURIDICA'),
-('Juan Pérez', NULL, '20-22334455-6', 'FISICA');
+('Juan Pérez', 'Simplicity', '20-22334455-6', 'FISICA');
 
 -- =========================
 -- STOCK PROVEEDOR - DROGA
