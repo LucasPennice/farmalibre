@@ -6,6 +6,7 @@ public class Proveedor {
     private String nombreFantasia;
     private String cuit;
     private TipoPersona tipoPersona;
+    private Boolean onboardingCompleto;
 
     public Proveedor() {
 
@@ -58,6 +59,14 @@ public class Proveedor {
 
     public void setTipoPersona(TipoPersona tipoPersona) {
         this.tipoPersona = tipoPersona;
+    }
+
+    public Boolean getOnboardingCompleto() {
+        return onboardingCompleto;
+    }
+
+    public void setOnboardingCompleto(Boolean onboardingCompleto) {
+        this.onboardingCompleto = onboardingCompleto;
     }
 
 }

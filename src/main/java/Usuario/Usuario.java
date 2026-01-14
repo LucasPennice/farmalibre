@@ -14,7 +14,8 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol, String nombreUsuario, String passEncriptada) {
+    public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol,
+            String nombreUsuario, String passEncriptada) {
         this.id = id;
         this.nombreCompletoRes = NombreCompletoRes;
         this.direccion = direccion;
@@ -63,11 +64,15 @@ public class Usuario {
     public void setRol(Rol rol) {
         this.rol = rol;
     }
-    
+
     public void setPassEncriptada(String passEncriptada) {
         this.passEncriptada = passEncriptada;
     }
-    
+
+    public String getPassEncriptada() {
+        return passEncriptada;
+    }
+
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
@@ -76,7 +81,7 @@ public class Usuario {
         return nombreUsuario;
     }
 
-     public Boolean getOnboarding_completo() {
+    public Boolean getOnboarding_completo() {
         return onboarding_completo;
     }
 

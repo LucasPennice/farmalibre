@@ -44,7 +44,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
         }
         return usuario;
     }
-    
+
     public Usuario findByNombreUsuario(String nombreUsuario) {
         log.info("Finding user by nombre : " + nombreUsuario);
         Usuario usuario = null;
@@ -115,7 +115,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
     @Override
     public void save(Usuario usuario) {
         log.info("Saving user");
-        String sql = "INSERT INTO usuario (nombre_completo_responsable, direccion, foto_perfil, rol) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO usuario (nombre_completo_responsable, direccion, foto_perfil, rol, nombreUsuario, passEncriptada, onboarding_completo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             startConnection();
@@ -123,7 +123,10 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.setString(1, usuario.getNombreCompletoRes());
             ps.setString(2, usuario.getDireccion());
             ps.setBytes(3, usuario.getFoto_perfil());
-            ps.setString(4, usuario.getRol().name()); // ✅ Convertir Enum a String
+            ps.setString(4, usuario.getRol().name());
+            ps.setString(5, usuario.getNombreUsuario());
+            ps.setString(6, usuario.getPassEncriptada());
+            ps.setBoolean(7, usuario.getOnboarding_completo());
 
             ps.executeUpdate();
 
