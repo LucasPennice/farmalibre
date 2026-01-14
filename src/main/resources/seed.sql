@@ -1,9 +1,13 @@
 USE farmacia_db;
 
 SET FOREIGN_KEY_CHECKS=0;
+
 TRUNCATE TABLE stock_droga_proveedor;
+TRUNCATE TABLE proveedor;
+TRUNCATE TABLE usuario;
 TRUNCATE TABLE droga;
 TRUNCATE TABLE categoria_droga;
+
 SET FOREIGN_KEY_CHECKS=1;
 
 -- =========================
@@ -30,12 +34,20 @@ INSERT INTO droga (nombre, composicion, unidad, categoria_id) VALUES
 ('Nandrolona', 'C18H26O2', 'Ampolla', 5);
 
 -- =========================
+-- USUARIOS
+-- =========================
+INSERT INTO usuario (nombre_completo_responsable, nombreUsuario, passEncriptada, direccion, rol) VALUES
+('Administrador General', 'admin', 'admin123', 'Oficina Central', 'ADMIN'),
+('María González', 'maria', 'maria123', 'Av. Siempre Viva 742', 'USUARIO'),
+('Carlos López', 'carlos', 'carlos123', 'Calle Falsa 123', 'USUARIO');
+
+-- =========================
 -- PROVEEDORES
 -- =========================
-INSERT INTO proveedor (razon_social, nombre_fantasia, cuit, tipo_persona) VALUES
-('Laboratorios Delta SA', 'Delta Pharma', '30-12345678-9', 'JURIDICA'),
-('Farmacéutica Río', 'Río Salud', '30-98765432-1', 'JURIDICA'),
-('Juan Pérez', 'Simplicity', '20-22334455-6', 'FISICA');
+INSERT INTO proveedor (usuario_id, razon_social, nombre_fantasia, cuit, tipo_persona) VALUES
+(1, 'Laboratorios Delta SA', 'Delta Pharma', '30-12345678-9', 'JURIDICA'),
+(2, 'Farmacéutica Río', 'Río Salud', '30-98765432-1', 'JURIDICA'),
+(3, 'Juan Pérez', 'Simplicity', '20-22334455-6', 'FISICA');
 
 -- =========================
 -- STOCK PROVEEDOR - DROGA
@@ -67,10 +79,3 @@ INSERT INTO stock_droga_proveedor (droga_id, proveedor_id, disponible, precio_un
 (6, 1, 60, 6700.00),
 (6, 2, 40, 6600.00);
 
--- =========================
--- USUARIOS
--- =========================
-INSERT INTO usuario (nombre_completo_responsable, nombreUsuario, passEncriptada, direccion, rol) VALUES
-('Administrador General', 'admin', 'admin123', 'Oficina Central', 'ADMIN'),
-('María González', 'maria', 'maria123', 'Av. Siempre Viva 742', 'USUARIO'),
-('Carlos López', 'carlos', 'carlos123', 'Calle Falsa 123', 'USUARIO');
