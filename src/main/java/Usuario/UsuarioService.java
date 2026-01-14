@@ -1,5 +1,6 @@
 package Usuario;
 
+import java.security.MessageDigest;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -133,6 +134,40 @@ public class UsuarioService implements GenericService<Usuario, String> {
         }
     }
 
+    static public Usuario registrar(String nombreCompleto, String email, String password) {
+        // log.info("Registrando nuevo usuario: " + email);
+
+        if (nombreCompleto == null || nombreCompleto.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre completo no puede ser vacío");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("El email no puede ser vacío");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("La contraseña no puede ser vacía");
+        }
+
+        // Verifico que no exista otro usuario con el mismo email (nombreUsuario)
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        Usuario existente = usuarioDAO.findByNombreUsuario(email);
+        
+        if (existente != null) {
+            throw new IllegalArgumentException("Ya existe un usuario registrado con ese nombre de usuario");
+        }
+
+        Usuario nuevo = new Usuario();
+        nuevo.setNombreCompletoRes(nombreCompleto);
+        nuevo.setNombreUsuario(email);
+        nuevo.setPassEncriptada(hashPassword(password));
+        nuevo.setRol(Rol.USUARIO);
+        nuevo.setOnboarding_completo(false);
+
+        usuarioDAO.save(nuevo);
+
+        return nuevo;
+    }
+
+
     private void validateSaveUsuario(Usuario usuario) {
         log.info("Entrando a: " + getClass().getName() + ".validateSaveUsuario");
         if (usuario == null) {
@@ -150,17 +185,19 @@ public class UsuarioService implements GenericService<Usuario, String> {
         if (usuario.getRol() == null) {
             throw new IllegalArgumentException("El rol del usuario no puede ser nulo o vacío");
         }
+    }
 
-        /*
-         * TODO el usuario al crear un perfil, eligue si o si un rol de proovedor o
-         * comprador?
-         */
-        // TODO Revisar roles, solo tenemos ADMIN y USUARIO, que pasa con otros roles?
-        // if (!usuario.getRol().equals(Rol.ADMIN) ||
-        // !usuario.getRol().equals(Rol.USUARIO)) {
-        // throw new IllegalArgumentException("El rol del usuario debe ser ADMIN o
-        // USUARIO para poder ser guardado");
-        // }
-
+    private static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashed = md.digest(password.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashed) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Error encriptando la contraseña", e);
+        }
     }
 }

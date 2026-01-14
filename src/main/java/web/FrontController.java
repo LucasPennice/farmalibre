@@ -16,6 +16,7 @@ import Proveedor.Proveedor;
 import Proveedor.ProveedorService;
 import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
+import Usuario.UsuarioService;
 import db.DatabaseInitializer;
 
 public class FrontController extends HttpServlet {
@@ -109,6 +110,37 @@ public class FrontController extends HttpServlet {
 
     request.setAttribute("errores", errores);
 
+    if (path.startsWith("/auth/register")) {
+        if (!request.getMethod().equalsIgnoreCase("POST")){
+            errores.add("Verbo incorrecto para /auth/register");
+            request.setAttribute("errores", errores);
+            // Redirige a homepage
+            handleHomepage(request,response,drogas);
+            return;
+        }
+
+        String nombre = request.getParameter("nombre");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        try {
+            UsuarioService.registrar(nombre, email, password);
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            request.setAttribute("errores", errores);
+        }finally{
+            // Redirige a homepage
+            handleHomepage(request,response,drogas);
+        }
+    }
+
+    if(path.startsWith("/auth/login")){
+        
+    }
+
+    
+
+
         if (path.equals("/") || path.equals("/index")) {
             handleHomepage(request, response, drogas);
         } else if (path.startsWith("/carrito")) {
@@ -121,8 +153,6 @@ public class FrontController extends HttpServlet {
             handleInventario(request, response);
         } else if (path.startsWith("/comprar-droga")) {
             handleDroga(request, response);
-        } else if (path.startsWith("/usuario")) {
-            handleUsuario(request, response);
         } else if (path.startsWith("/perfil")) {
             handlePerfil(request, response);
         } else if (path.startsWith("/aprobar-categorias")) {
@@ -146,25 +176,16 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
-    private void handleUsuario(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute("pageTitle", "Usuarios");
-        request.setAttribute("content", "/WEB-INF/views/pages/usuarios.jsp");
-        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
-    }
-
     private void handleAuth(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Autenticación");
-        request.setAttribute("content", "/WEB-INF/views/pages/auth.jsp");
-        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/pages/auth.jsp").forward(request, response);
     }
 
     private void handleOnboarding(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Onboarding");
-        request.setAttribute("content", "/WEB-INF/views/pages/onboarding.jsp");
-        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/pages/onboarding.jsp").forward(request, response);
     }
 
     private void handleInventario(HttpServletRequest request, HttpServletResponse response)
@@ -207,3 +228,6 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 }
+
+
+

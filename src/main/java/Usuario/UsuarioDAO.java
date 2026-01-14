@@ -44,6 +44,41 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
         }
         return usuario;
     }
+    
+    public Usuario findByNombreUsuario(String nombreUsuario) {
+        log.info("Finding user by nombre : " + nombreUsuario);
+        Usuario usuario = null;
+        String sql = "SELECT * FROM usuario WHERE nombreUsuario = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, nombreUsuario);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                usuario = new Usuario();
+                usuario.setId(rs.getInt("id"));
+                usuario.setNombreCompletoRes(rs.getString("nombre_completo_responsable"));
+                usuario.setDireccion(rs.getString("direccion"));
+                usuario.setFoto_perfil(rs.getBytes("foto_perfil"));
+                usuario.setRol(Rol.valueOf(rs.getString("rol")));
+                usuario.setNombreUsuario((rs.getString("nombreUsuario")));
+                usuario.setPassEncriptada((rs.getString("passEncriptada")));
+                usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el usuario");
+        } finally {
+            closeConnection();
+        }
+        return usuario;
+    }
 
     @Override
     public LinkedList<Usuario> findAll() {

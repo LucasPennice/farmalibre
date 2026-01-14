@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     passEncriptada VARCHAR(150) NOT NULL,
     direccion VARCHAR(200),
     foto_perfil MEDIUMBLOB,
-    rol ENUM('USUARIO', 'ADMIN') NOT NULL
+    rol ENUM('USUARIO', 'ADMIN') NOT NULL,
+    onboarding_completo BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 

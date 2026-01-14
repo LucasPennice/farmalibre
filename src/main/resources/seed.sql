@@ -36,10 +36,10 @@ INSERT INTO droga (nombre, composicion, unidad, categoria_id) VALUES
 -- =========================
 -- USUARIOS
 -- =========================
-INSERT INTO usuario (nombre_completo_responsable, nombreUsuario, passEncriptada, direccion, rol) VALUES
-('Administrador General', 'admin', 'admin123', 'Oficina Central', 'ADMIN'),
-('María González', 'maria', 'maria123', 'Av. Siempre Viva 742', 'USUARIO'),
-('Carlos López', 'carlos', 'carlos123', 'Calle Falsa 123', 'USUARIO');
+INSERT INTO usuario (nombre_completo_responsable, nombreUsuario, passEncriptada, direccion, rol, onboarding_completo) VALUES
+('Administrador General', 'admin', 'admin123', 'Oficina Central', 'ADMIN', FALSE),
+('María González', 'maria', 'maria123', 'Av. Siempre Viva 742', 'USUARIO', FALSE),
+('Carlos López', 'carlos', 'carlos123', 'Calle Falsa 123', 'USUARIO', FALSE);
 
 -- =========================
 -- PROVEEDORES

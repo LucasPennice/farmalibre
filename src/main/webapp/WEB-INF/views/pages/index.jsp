@@ -11,17 +11,19 @@
       />
     </div>
 
-    <a href="/carrito" class="cart">
+    <a href="/farmalibre/carrito" class="cart">
       <img src="assets/images/carrito.png" />
       <p class="badge">5</p>
     </a>
 
-    <div class="foto_farmacia">
-      <img src="" />
-    </div>
+    <a href="/farmalibre/perfil" class="perfil_index_contenedor anchor_remove_styles">
+      <div class="foto_farmacia">
+        <img src="" />
+      </div>
 
-    <p class="farmacia_nombre">Droguería San Marcos</p>
-  </div>
+      <p class="farmacia_nombre">Droguería San Marcos</p>
+      </div>
+    </a>
 
   <div class="drogas_list_container">
     <c:forEach var="d" items="${drogaDTOs}">

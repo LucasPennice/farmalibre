@@ -9,6 +9,7 @@ public class Usuario {
     private String passEncriptada;
     private byte[] foto_perfil;
     private Rol rol;
+    private Boolean onboarding_completo;
 
     public Usuario() {
     }
@@ -62,8 +63,24 @@ public class Usuario {
     public void setRol(Rol rol) {
         this.rol = rol;
     }
+    
+    public void setPassEncriptada(String passEncriptada) {
+        this.passEncriptada = passEncriptada;
+    }
+    
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 
     public String getNombreUsuario() {
         return nombreUsuario;
+    }
+
+     public Boolean getOnboarding_completo() {
+        return onboarding_completo;
+    }
+
+    public void setOnboarding_completo(Boolean onboarding_completo) {
+        this.onboarding_completo = onboarding_completo;
     }
 }
