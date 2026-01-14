@@ -13,6 +13,7 @@
     "deploy:skiptest": "mvn clean package -DskipTests && cp target/*.war $CATALINA_HOME/webapps/",
     "refresh": "npm run compile & npm run deploy",
     "tomcat:start": "dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
+    "tomcat:debug": "CATALINA_OPTS=\"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000\" dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
     "tomcat:stop": "$CATALINA_HOME/bin/shutdown.sh",
     "tomcat:restart": "$CATALINA_HOME/bin/shutdown.sh && sleep 2 && dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
     "db:seed": "mysql -u root -p < src/main/resources/seed.sql"
