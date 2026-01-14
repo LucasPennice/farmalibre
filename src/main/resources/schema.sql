@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS proveedor (
     nombre_fantasia VARCHAR(150),
     cuit VARCHAR(20) NOT NULL UNIQUE,
     tipo_persona ENUM('FISICA', 'JURIDICA') NOT NULL,
+    onboarding_completo BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 

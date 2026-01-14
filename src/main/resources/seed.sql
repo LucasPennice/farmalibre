@@ -44,10 +44,10 @@ INSERT INTO usuario (nombre_completo_responsable, nombreUsuario, passEncriptada,
 -- =========================
 -- PROVEEDORES
 -- =========================
-INSERT INTO proveedor (usuario_id, razon_social, nombre_fantasia, cuit, tipo_persona) VALUES
-(1, 'Laboratorios Delta SA', 'Delta Pharma', '30-12345678-9', 'JURIDICA'),
-(2, 'Farmacéutica Río', 'Río Salud', '30-98765432-1', 'JURIDICA'),
-(3, 'Juan Pérez', 'Simplicity', '20-22334455-6', 'FISICA');
+INSERT INTO proveedor (usuario_id, razon_social, nombre_fantasia, cuit, tipo_persona, onboarding_completo) VALUES
+(1, 'Laboratorios Delta SA', 'Delta Pharma', '30-12345678-9', 'JURIDICA', FALSE),
+(2, 'Farmacéutica Río', 'Río Salud', '30-98765432-1', 'JURIDICA', FALSE),
+(3, 'Juan Pérez', 'Simplicity', '20-22334455-6', 'FISICA', FALSE);
 
 -- =========================
 -- STOCK PROVEEDOR - DROGA
