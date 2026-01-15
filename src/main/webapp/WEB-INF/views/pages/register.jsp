@@ -21,20 +21,20 @@
           <div class="auth-card">
             <h1 class="auth-title">Drogas para su laboratorio<br />al mejor precio</h1>
 
-            <form class="auth-form" action="${pageContext.request.contextPath}/auth/register" method="post">
+            <form class="auth-form" action="${pageContext.request.contextPath}/auth/do-register" method="post">
               <label class="field">
                 <span class="field__label">Nombre Completo*</span>
-                <input class="field__input" type="text" name="nombre" autocomplete="name" />
+                <input class="field__input" type="text" name="nombre" autocomplete="name" required/>
               </label>
 
               <label class="field">
                 <span class="field__label">Email De Contacto*</span>
-                <input class="field__input" type="email" name="email" autocomplete="email" />
+                <input class="field__input" type="email" name="email" autocomplete="email" required/>
               </label>
 
               <label class="field">
                 <span class="field__label">Contraseña*</span>
-                <input class="field__input" type="password" name="password" autocomplete="new-password" />
+                <input class="field__input" type="password" name="password" autocomplete="new-password" required/>
               </label>
 
               <button class="primary-btn" type="submit">Crear Cuenta</button>

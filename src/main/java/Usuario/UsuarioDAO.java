@@ -129,7 +129,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.setString(5, usuario.getNombreUsuario());
             ps.setString(6, usuario.getPassEncriptada());
             ps.setBoolean(7, usuario.getOnboarding_completo());
-            ps.setString(5, usuario.getEmail());
+            ps.setString(8, usuario.getEmail());
 
             ps.executeUpdate();
 

@@ -15,17 +15,16 @@ public class AuthFilter implements Filter {
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        boolean isPrivate =
-            path.startsWith("/carrito") ||
-            path.startsWith("/inventario") ||
-            path.startsWith("/perfil") ||
-            path.startsWith("/aprobar-categorias");
+        boolean isPrivate = path.startsWith("/carrito") ||
+                path.startsWith("/inventario") ||
+                path.startsWith("/perfil") ||
+                path.startsWith("/aprobar-categorias");
 
         HttpSession session = request.getSession(false);
         boolean loggedIn = (session != null && session.getAttribute("usuario") != null);
 
         if (!loggedIn && isPrivate) {
-            response.sendRedirect(request.getContextPath() + "/auth");
+            response.sendRedirect(request.getContextPath() + "/auth/register");
             return;
         }
 
