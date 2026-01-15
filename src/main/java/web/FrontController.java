@@ -234,10 +234,10 @@ public class FrontController extends HttpServlet {
 
         try {
             UsuarioService.autenticar(nombre, email, password);
-            HttpSession session = request.getSession(true);
-            session.setAttribute("email", email);
-            session.setAttribute("nombre", nombre);
 
+            HttpSession session = request.getSession(true);
+            session.setAttribute("usuario", nombre);
+            
             return;
         } catch (Exception e) {
             errores.add(e.getMessage());
