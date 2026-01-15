@@ -98,6 +98,18 @@ public class DrogaService implements GenericService<Droga, String> {
         }
     }
 
+    public LinkedList<Droga> findBySearchQuery(String searchQuery) {
+        try {
+            log.info("Buscando drogas con query: " + searchQuery);
+            if (ValidatorUtil.isBlank(searchQuery)) {
+                return findAll();
+            }
+            return drogaDAO.findBySearchQuery(searchQuery);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private void validateDroga(Droga droga) {
         if (droga == null) {
             throw new IllegalArgumentException("La droga no puede ser nula");

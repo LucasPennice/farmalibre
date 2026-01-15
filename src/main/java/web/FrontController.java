@@ -123,9 +123,14 @@ public class FrontController extends HttpServlet {
             doLogin(request, response, errores, drogas);
             return;
         }
-        
+
         if (path.startsWith("/auth/do-logout")) {
             doLogout(request, response, errores, drogas);
+            return;
+        }
+
+        if (path.startsWith("/do-filter")) {
+            handleHomepage(request, response, drogas);
             return;
         }
 
@@ -215,11 +220,32 @@ public class FrontController extends HttpServlet {
 
     private void handleHomepage(HttpServletRequest request, HttpServletResponse response, LinkedList<Droga> drogas)
             throws ServletException, IOException {
-        LinkedList<DrogaDTO> drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, null, null, null);
+
+        String searchQuery = request.getParameter("filter");
+        String categoriaId = request.getParameter("categoriaId");
+
+        LinkedList<DrogaDTO> drogaDTOs;
+
+        // Filtrar por categoría
+        if (categoriaId != null && !categoriaId.isEmpty()) {
+            LinkedList<Droga> drogasFiltradas = new LinkedList<>();
+            for (Droga droga : drogas) {
+                if (droga.getCategoriaDroga().getId().toString().equals(categoriaId)) {
+                    drogasFiltradas.add(droga);
+                }
+            }
+            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogasFiltradas, null);
+        }
+        // Filtrar por búsqueda
+        else if (searchQuery != null && !searchQuery.isEmpty()) {
+            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, searchQuery);
+        }
+        // Sin filtros
+        else {
+            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, null);
+        }
+
         request.setAttribute("drogaDTOs", drogaDTOs);
-
-        // TODO: si el path tiene do-filter y el param ?filter aca corremos la funcion filter (en BuscarDrogasController) y pisamos el atributo drogas
-
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -244,7 +270,7 @@ public class FrontController extends HttpServlet {
 
             HttpSession session = request.getSession(true);
             session.setAttribute("usuario", nombre);
-            
+
             return;
         } catch (Exception e) {
             errores.add(e.getMessage());
@@ -279,17 +305,18 @@ public class FrontController extends HttpServlet {
             handleHomepage(request, response, drogas);
         }
     }
-    
-    private void doLogout(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores, LinkedList<Droga> drogas)
+
+    private void doLogout(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores,
+            LinkedList<Droga> drogas)
             throws ServletException, IOException {
 
         try {
             HttpSession session = request.getSession(false);
-            session.invalidate();   
+            session.invalidate();
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
-        }finally {
+        } finally {
             handleHomepage(request, response, drogas);
         }
     }

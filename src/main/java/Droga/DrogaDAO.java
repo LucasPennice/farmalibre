@@ -160,4 +160,34 @@ public class DrogaDAO extends AbstractDAO implements GenericDAO<Droga, String> {
         droga.setCategoriaDroga(categoria);
         return droga;
     }
+
+    public LinkedList<Droga> findBySearchQuery(String searchQuery) {
+        log.info("Finding drogas by search query: " + searchQuery);
+        LinkedList<Droga> drogas = new LinkedList<>();
+        String sql = "SELECT * FROM droga WHERE LOWER(nombre) LIKE ? OR LOWER(composicion) LIKE ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            String likePattern = "%" + searchQuery.toLowerCase() + "%";
+            ps.setString(1, likePattern);
+            ps.setString(2, likePattern);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                drogas.add(mapDroga(rs));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pueden buscar las drogas");
+        } finally {
+            closeConnection();
+        }
+
+        return drogas;
+    }
 }

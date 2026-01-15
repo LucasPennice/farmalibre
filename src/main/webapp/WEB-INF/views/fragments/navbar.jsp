@@ -12,7 +12,7 @@
     <c:forEach items="${categorias}" var="c">
       <c:set var="activeId" value="${param.categoriaId}" />
       <a
-        href="?categoriaId=${c.id}"
+        href="${pageContext.request.contextPath}/?categoriaId=${c.id}"
         class="categoria-link ${c.id == activeId ? 'categoria-link-activo' : ''}"
       >
         ${c.nombre}

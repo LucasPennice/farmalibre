@@ -3,14 +3,16 @@
 
 <div>
   <div class="topbar">
-    <form  action="${pageContext.request.contextPath}/do-filter" method="post">
-      <img src="${pageContext.request.contextPath}/assets/images/lupa.png" />
-      <input
-        type="text"
-        placeholder="Buscar droga por nombre, composición, o categoría"
-      />
-    </form>
-
+    <div class="search-wrapper">
+      <form  action="${pageContext.request.contextPath}/do-filter" method="post">
+        <img src="${pageContext.request.contextPath}/assets/images/lupa.png"/>
+        <input
+          type="text"
+          name="filter"
+          placeholder="Buscar droga por nombre, composición, o categoría"
+        />
+      </form>
+    </div>
     <a href="/farmalibre/carrito" class="cart">
       <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />
       <p class="badge">5</p>
