@@ -47,7 +47,8 @@
 }
 
 .login-btn {
-  width: 100%;
+  display: block !important;
+  all: unset;
   padding: 12px;
   border-radius: 10px;
   background: #f3f3f3;
@@ -393,15 +394,17 @@
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1.15fr;
-  gap: 48px;
-  padding: 28px 32px;
+  padding: 40px;
   align-items: stretch;
 }
 
 .auth-left {
   display: flex;
   flex-direction: column;
+  gap: 100px;
   padding-left: 10px;
+  margin-right: 80px;
+  margin-bottom: 80px;
 }
 
 .brand {
@@ -432,17 +435,11 @@
   opacity: 0.85;
 }
 
-.auth-card {
-  margin-top: 78px;
-  max-width: 520px;
-}
-
 .auth-title {
-  margin: 0 0 34px 0;
-  font-size: 48px;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  font-weight: 600;
+  font-size: 36px;
+  font-weight: 500;
+  color: black;
+  margin-bottom: 16px;
 }
 
 .auth-form {
@@ -458,18 +455,22 @@
 }
 
 .field__label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  color: #111827;
+  color: #000000;
+}
+
+.auth_logo {
+  width: 110px;
+  height: 25px;
 }
 
 .field__input {
-  width: 100%;
   height: 48px;
   padding: 0 16px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--input-bg);
+  border: 1px solid #999999;
+  border-radius: 16px;
+  background: white;
   outline: none;
   font-size: 14px;
 }
@@ -481,23 +482,19 @@
 
 .primary-btn {
   margin-top: 22px;
-  height: 56px;
+  height: 46px;
   border: 0;
-  border-radius: 14px;
-  background: var(--blue);
+  border-radius: 12px;
+  background: #2763fd;
   color: #fff;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(47, 100, 255, 0.22);
+  transition: 200ms;
 }
 
 .primary-btn:hover {
-  filter: brightness(1.02);
-}
-.primary-btn:active {
-  background: var(--blue-pressed);
-  transform: translateY(1px);
+  transform: translateY(-6px) scale(1.015);
 }
 
 .auth-foot {
@@ -519,11 +516,13 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  padding: 10px 6px 10px 0;
+
+  width: calc(50% - 40px);
 }
 
 .hero-panel {
-  flex: 1;
+  height: calc(100% - 80px);
+  width: 100%;
   border-radius: 22px;
   background: radial-gradient(
       1200px 700px at 70% 30%,
@@ -536,5 +535,4 @@
       transparent 52%
     ),
     linear-gradient(180deg, #f2f6fb 0%, #f6f3ef 100%);
-  border: 1px solid rgba(17, 24, 39, 0.06);
 }

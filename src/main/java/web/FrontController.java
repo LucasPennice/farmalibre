@@ -80,6 +80,7 @@ public class FrontController extends HttpServlet {
         try {
             drogaService = new DrogaService();
             drogas.addAll(drogaService.findAll());
+
             request.setAttribute("drogas", drogas);
         } catch (Exception e) {
             errores.add(e.getMessage());
@@ -120,6 +121,11 @@ public class FrontController extends HttpServlet {
 
         if (path.startsWith("/auth/do-login")) {
             doLogin(request, response, errores, drogas);
+            return;
+        }
+        
+        if (path.startsWith("/auth/do-logout")) {
+            doLogout(request, response, errores, drogas);
             return;
         }
 
@@ -212,6 +218,8 @@ public class FrontController extends HttpServlet {
         LinkedList<DrogaDTO> drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, null, null, null);
         request.setAttribute("drogaDTOs", drogaDTOs);
 
+        // TODO: si el path tiene do-filter y el param ?filter aca corremos la funcion filter (en BuscarDrogasController) y pisamos el atributo drogas
+
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -229,11 +237,10 @@ public class FrontController extends HttpServlet {
         }
 
         String nombre = request.getParameter("nombre");
-        String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
-            UsuarioService.autenticar(nombre, email, password);
+            UsuarioService.autenticar(nombre, password);
 
             HttpSession session = request.getSession(true);
             session.setAttribute("usuario", nombre);
@@ -272,5 +279,18 @@ public class FrontController extends HttpServlet {
             handleHomepage(request, response, drogas);
         }
     }
+    
+    private void doLogout(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores, LinkedList<Droga> drogas)
+            throws ServletException, IOException {
 
+        try {
+            HttpSession session = request.getSession(false);
+            session.invalidate();   
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            request.setAttribute("errores", errores);
+        }finally {
+            handleHomepage(request, response, drogas);
+        }
+    }
 }

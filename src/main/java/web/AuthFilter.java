@@ -20,8 +20,15 @@ public class AuthFilter implements Filter {
                 path.startsWith("/perfil") ||
                 path.startsWith("/aprobar-categorias");
 
+        boolean blockIfLogged = path.startsWith("/auth") && !path.startsWith("/auth/do-logout");
+
         HttpSession session = request.getSession(false);
         boolean loggedIn = (session != null && session.getAttribute("usuario") != null);
+
+        if(loggedIn && blockIfLogged){
+            response.sendRedirect(request.getContextPath() + "/");
+            return;
+        }
 
         if (!loggedIn && isPrivate) {
             response.sendRedirect(request.getContextPath() + "/auth/register");

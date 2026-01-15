@@ -12,24 +12,15 @@
     <body>
       <main class="auth-shell">
         <section class="auth-left">
-          <header class="brand">
-            <div class="brand__name">
-              Farma<span class="brand__accent">Libre</span>
-            </div>
-          </header>
+          <img src="${pageContext.request.contextPath}/assets/images/Logo.png" class="auth_logo" />
 
           <div class="auth-card">
-            <h1 class="auth-title">Login</h1>
+            <h1 class="auth-title">Drogas para su laboratorio al mejor precio</h1>
 
-            <form class="auth-form" action="${pageContext.request.contextPath}/auth/register" method="post">
+            <form class="auth-form" action="${pageContext.request.contextPath}/auth/do-login" method="post">
               <label class="field">
                 <span class="field__label">Nombre Completo*</span>
                 <input class="field__input" type="text" name="nombre" autocomplete="name" required/>
-              </label>
-
-              <label class="field">
-                <span class="field__label">Email De Contacto*</span>
-                <input class="field__input" type="email" name="email" autocomplete="email" required/>
               </label>
 
               <label class="field">
@@ -37,19 +28,17 @@
                 <input class="field__input" type="password" name="password" autocomplete="new-password" required/>
               </label>
 
-              <button class="primary-btn" type="submit">Crear Cuenta</button>
+              <button class="primary-btn" type="submit">Iniciar Sesión</button>
 
               <p class="auth-foot">
-                Ya tiene una cuenta?
-                <a class="auth-link" href="#">Ingresar Aquí</a>
+                No nos conocemos?
+                <a class="auth-link" href="${pageContext.request.contextPath}/auth/register">Crear Cuenta</a>
               </p>
             </form>
           </div>
         </section>
 
-        <aside class="auth-right" aria-hidden="true">
-          <div class="hero-panel"></div>
-        </aside>
+        <div class="hero-panel"></div>
       </main>
     </body>
   </html>

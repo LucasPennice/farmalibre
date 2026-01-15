@@ -3,13 +3,13 @@
 
 <div>
   <div class="topbar">
-    <div class="search-wrapper">
+    <form  action="${pageContext.request.contextPath}/do-filter" method="post">
       <img src="${pageContext.request.contextPath}/assets/images/lupa.png" />
       <input
         type="text"
         placeholder="Buscar droga por nombre, composición, o categoría"
       />
-    </div>
+    </form>
 
     <a href="/farmalibre/carrito" class="cart">
       <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />

@@ -168,10 +168,7 @@ public class UsuarioService implements GenericService<Usuario, String> {
         return nuevo;
     }
 
-    static public Usuario autenticar(String nombreCompleto, String email, String password){
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("El email no puede ser vacío");
-        }
+    static public Usuario autenticar(String nombreCompleto, String password){
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede ser vacía");
         }

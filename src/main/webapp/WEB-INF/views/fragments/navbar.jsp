@@ -39,7 +39,20 @@
   <div style="flex: 1"></div>
 
   <div class="auth-actions">
-    <button class="login-btn">Iniciar Sesión</button>
-    <a class="register-link" href="#">Crear Cuenta</a>
+    <c:choose>
+      <c:when test="${not empty sessionScope.usuario}">
+        <a href="${pageContext.request.contextPath}/auth/do-logout" class="register-link">
+          <img src="${pageContext.request.contextPath}/assets/images/logout.png" class="accion_rapida_icono" />
+          Cerrar Sesión
+        </a>
+      </c:when>
+      <c:otherwise>
+        <a href="${pageContext.request.contextPath}/auth/login" class="login-btn">
+          <img src="${pageContext.request.contextPath}/assets/images/login.png" class="accion_rapida_icono" />
+          Iniciar Sesión
+        </a>
+        <a class="register-link" href="${pageContext.request.contextPath}/auth/register">Crear Cuenta</a>
+      </c:otherwise>
+    </c:choose>
   </div>
 </nav>
