@@ -17,7 +17,7 @@
           <div class="auth-card">
             <h1 class="auth-title">Drogas para su laboratorio al mejor precio</h1>
 
-            <form class="auth-form" action="${pageContext.request.contextPath}/auth/do-login" method="post">
+            <form class="auth-form" action="${pageContext.request.contextPath}/auth/do-complete-onboarding-usuario" method="post">
               <label class="field">
                 <span class="field__label">Nombre Completo*</span>
                 <input class="field__input" type="text" name="nombre" autocomplete="name" required/>

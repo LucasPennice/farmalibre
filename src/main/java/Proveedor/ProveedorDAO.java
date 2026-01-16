@@ -32,6 +32,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
                 proveedor.setNombreFantasia(rs.getString("nombre_fantasia"));
                 proveedor.setCuit(rs.getString("cuit"));
                 proveedor.setTipoPersona(TipoPersona.valueOf(rs.getString("tipo_persona")));
+                proveedor.setUsuarioId(rs.getInt("usuario_id"));
+                proveedor.setOnboardingCompleto(rs.getBoolean("onboarding_completo"));
             }
 
             rs.close();
@@ -63,6 +65,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
                 proveedor.setNombreFantasia(rs.getString("nombre_fantasia"));
                 proveedor.setCuit(rs.getString("cuit"));
                 proveedor.setTipoPersona(TipoPersona.valueOf(rs.getString("tipo_persona")));
+                proveedor.setUsuarioId(rs.getInt("usuario_id"));
+                proveedor.setOnboardingCompleto(rs.getBoolean("onboarding_completo"));
             }
 
             rs.close();
@@ -94,6 +98,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
                 proveedor.setNombreFantasia(rs.getString("nombre_fantasia"));
                 proveedor.setCuit(rs.getString("cuit"));
                 proveedor.setTipoPersona(TipoPersona.valueOf(rs.getString("tipo_persona")));
+                proveedor.setUsuarioId(rs.getInt("usuario_id"));
+                proveedor.setOnboardingCompleto(rs.getBoolean("onboarding_completo"));
                 proveedores.add(proveedor);
             }
 
@@ -111,15 +117,18 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
     @Override
     public void save(Proveedor proveedor) {
         log.info("Saving proveedor");
-        String sql = "INSERT INTO proveedor (razon_social, nombre_fantasia, cuit, tipo_persona) VALUES (?, ?, ?, ?)";
+        
+        String sql = "INSERT INTO proveedor (usuario_id, razon_social, nombre_fantasia, cuit, tipo_persona) VALUES (?, ?, ?, ?, ?)";
 
         try {
             startConnection();
             PreparedStatement ps = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, proveedor.getRazonSocial());
-            ps.setString(2, proveedor.getNombreFantasia());
-            ps.setString(3, proveedor.getCuit());
-            ps.setString(4, proveedor.getTipoPersona().name());
+            
+            ps.setInt(1, proveedor.getUsuarioId());
+            ps.setString(2, proveedor.getRazonSocial());
+            ps.setString(3, proveedor.getNombreFantasia());
+            ps.setString(4, proveedor.getCuit());
+            ps.setString(5, proveedor.getTipoPersona().name());
 
             ps.executeUpdate();
 
@@ -143,7 +152,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
     @Override
     public void update(Proveedor proveedor) {
         log.info("Updating proveedor with ID: " + proveedor.getId());
-        String sql = "UPDATE proveedor SET razon_social = ?, nombre_fantasia = ?, cuit = ?, tipo_persona = ? WHERE id = ?";
+                
+        String sql = "UPDATE proveedor SET razon_social = ?, nombre_fantasia = ?, cuit = ?, tipo_persona = ?, onboarding_completo = ? WHERE id = ?";
 
         try {
             startConnection();
@@ -152,7 +162,8 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
             ps.setString(2, proveedor.getNombreFantasia());
             ps.setString(3, proveedor.getCuit());
             ps.setString(4, proveedor.getTipoPersona().name());
-            ps.setInt(5, proveedor.getId());
+            ps.setBoolean(5, proveedor.getOnboardingCompleto());
+            ps.setInt(6, proveedor.getId());
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {

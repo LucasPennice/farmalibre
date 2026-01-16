@@ -3,6 +3,9 @@ package web;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 
+import jakarta.servlet.annotation.MultipartConfig;
+import java.io.InputStream;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -15,6 +18,7 @@ import Droga.Droga;
 import Droga.DrogaService;
 import Proveedor.Proveedor;
 import Proveedor.ProveedorService;
+import Proveedor.TipoPersona;
 import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 import Usuario.Usuario;
@@ -23,17 +27,65 @@ import db.DatabaseInitializer;
 
 // TODO: Hacer vista onboarding comprador
 // TODO: Hacer vista onboarding proveedor
-// TODO: Cuando el usuario se loguea checkear si tiene onb completo y redirigir (a onv usuario o onb proveedor)
-// TODO: Redirigir automaticamente a onb comprador si usuario log y no termino onb
+// TODO: Cuando el usuario se loguea checkear si tiene onb completo y redirigir (a onv usuario o onb proveedor) ✅
+// TODO: Redirigir automaticamente a onb comprador si usuario log y no termino onb 
 // TODO: Redirigir automaticamente a onb proveedor si usuario log y es proveedor y no termino onb proveedor
 
+@MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class FrontController extends HttpServlet {
+    LinkedList<String> errores = new LinkedList<String>();
+    LinkedList<CategoriaDroga> categorias = new LinkedList<CategoriaDroga>();
+    LinkedList<Droga> drogas = new LinkedList<Droga>();
+    LinkedList<Proveedor> proveedores = new LinkedList<Proveedor>();
+    LinkedList<StockDroga> stockDrogas = new LinkedList<StockDroga>();
 
     public FrontController() {
-        super(); // preserves the default HttpServlet initialization behavior
+        super();
         
-        // TODO: place custom initialization logic here that should run at construction time
+        // Fetch de Cateogrias con error handling
+        try {
+            CategoriaDrogaService categoriaDrogaService;
+            categoriaDrogaService = new CategoriaDrogaService();
+            categorias.addAll(categoriaDrogaService.findAll());
+            
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Drogas con error handling
+        
+        try {
+            DrogaService drogaService;
+            drogaService = new DrogaService();
+            drogas.addAll(drogaService.findAll());
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Proveedores con error handling
+
+        try {
+            ProveedorService proveedorService;
+            proveedorService = new ProveedorService();
+            proveedores.addAll(proveedorService.findAll());
+            
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Stock Drogas con error handling
+
+        try {
+            StockDrogaService stockDrogaService;
+            stockDrogaService = new StockDrogaService();
+            stockDrogas.addAll(stockDrogaService.findAll());
+            
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
     }
+
     Logger log = Logger.getLogger(FrontController.class.getName());
 
     @Override
@@ -70,87 +122,46 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        LinkedList<String> errores = new LinkedList<String>();
-
-        // Fetch de CategoriaDroga con error handling
-
-        CategoriaDrogaService categoriaDrogaService;
-        LinkedList<CategoriaDroga> categorias = new LinkedList<CategoriaDroga>();
-
-        try {
-            categoriaDrogaService = new CategoriaDrogaService();
-            categorias.addAll(categoriaDrogaService.findAll());
-            request.setAttribute("categorias", categorias);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Drogas con error handling
-
-        DrogaService drogaService;
-        LinkedList<Droga> drogas = new LinkedList<Droga>();
-
-        try {
-            drogaService = new DrogaService();
-            drogas.addAll(drogaService.findAll());
-
-            request.setAttribute("drogas", drogas);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Proveedores con error handling
-
-        ProveedorService proveedorService;
-        LinkedList<Proveedor> proveedores = new LinkedList<Proveedor>();
-
-        try {
-            proveedorService = new ProveedorService();
-            proveedores.addAll(proveedorService.findAll());
-            request.setAttribute("proveedores", proveedores);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Stock Drogas con error handling
-
-        StockDrogaService stockDrogaService;
-        LinkedList<StockDroga> stockDrogas = new LinkedList<StockDroga>();
-
-        try {
-            stockDrogaService = new StockDrogaService();
-            stockDrogas.addAll(stockDrogaService.findAll());
-            request.setAttribute("stockDrogas", stockDrogas);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
+        request.setAttribute("categorias", categorias);
+        request.setAttribute("drogas", drogas);
+        request.setAttribute("proveedores", proveedores);
+        request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("errores", errores);
 
         if (path.startsWith("/auth/do-register")) {
-            doRegister(request, response, errores, drogas);
+            doRegister(request, response);
             return;
         }
 
         if (path.startsWith("/auth/do-login")) {
-            doLogin(request, response, errores, drogas);
+            doLogin(request, response);
             return;
         }
 
         if (path.startsWith("/auth/do-logout")) {
-            doLogout(request, response, errores, drogas);
+            doLogout(request, response);
             return;
         }
 
         if (path.startsWith("/do-filter")) {
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
+            return;
+        }
+        
+        if (path.startsWith("/do-complete-onboarding-proveedor")) {
+            doCompleteOnboardingProveedor(request, response);
+            return;
+        }
+        
+        if (path.startsWith("/do-complete-onboarding-usuario")) {
+            doCompleteOnboardingUsuario(request, response);
             return;
         }
 
-        onboardingFilter(request, response, errores, drogas);
+        onboardingFilter(request, response);
 
         if (path.equals("/") || path.equals("/index")) {
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
         } else if (path.startsWith("/carrito")) {
             handleCarrito(request, response);
         } else if (path.startsWith("/auth/login")) {
@@ -201,7 +212,7 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/pages/login.jsp").forward(request, response);
     }
 
-    private void onboardingFilter(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores, LinkedList<Droga> drogas)
+    private void onboardingFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             HttpSession session = request.getSession(false);
@@ -231,7 +242,7 @@ public class FrontController extends HttpServlet {
         } catch (Exception e) {
             errores.add(e.getMessage()); 
             request.setAttribute("errores", errores);
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
         } 
     }
 
@@ -275,7 +286,7 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/404.jsp").forward(request, response);
     }
 
-    private void handleHomepage(HttpServletRequest request, HttpServletResponse response, LinkedList<Droga> drogas)
+    private void handleHomepage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String searchQuery = request.getParameter("filter");
@@ -308,14 +319,13 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
-    private void doLogin(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores,
-            LinkedList<Droga> drogas)
+    private void doLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!request.getMethod().equalsIgnoreCase("POST")) {
             errores.add("Verbo incorrecto para /auth/do-login");
             request.setAttribute("errores", errores);
             // Redirige a homepage
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
             return;
         }
 
@@ -328,24 +338,24 @@ public class FrontController extends HttpServlet {
             HttpSession session = request.getSession(true);
             session.setAttribute("usuario_id", usuarioAutenticado.getId());
 
-            return onboardingFilter(request, response);
+            onboardingFilter(request, response);
+            return;
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
         } finally {
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
         }
 
     }
 
-    private void doRegister(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores,
-            LinkedList<Droga> drogas)
+    private void doRegister(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!request.getMethod().equalsIgnoreCase("POST")) {
             errores.add("Verbo incorrecto para /auth/register");
             request.setAttribute("errores", errores);
             // Redirige a homepage
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
             return;
         }
 
@@ -355,16 +365,15 @@ public class FrontController extends HttpServlet {
 
         try {
             UsuarioService.registrar(nombre, email, password);
-            doLogin(request, response, errores, drogas);
+            doLogin(request, response);
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
         }
     }
 
-    private void doLogout(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores,
-            LinkedList<Droga> drogas)
+    private void doLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
@@ -374,7 +383,104 @@ public class FrontController extends HttpServlet {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
         } finally {
-            handleHomepage(request, response, drogas);
+            handleHomepage(request, response);
+        }
+    }
+
+    private void doCompleteOnboardingUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (!request.getMethod().equalsIgnoreCase("POST")) {
+            errores.add("Verbo incorrecto para /do-complete-onboarding-usuario");
+            request.setAttribute("errores", errores);
+            // Redirige a homepage
+            handleHomepage(request, response);
+            return;
+        }
+
+        String usuarioId = request.getParameter("usuarioId");
+        String direccion = request.getParameter("direccion");
+
+        byte[] fotoPerfilBytes = null;
+
+        try {
+            if (request.getPart("fotoPerfil") != null && request.getPart("fotoPerfil").getSize() > 0) {
+                InputStream is = request.getPart("fotoPerfil").getInputStream();
+                fotoPerfilBytes = is.readAllBytes();
+            }
+        } catch (Exception e) {
+            errores.add("Error al procesar foto de perfil: " + e.getMessage());
+        }
+
+        byte[] fotoPerfil = fotoPerfilBytes;
+
+        Boolean esProveedor = Boolean.parseBoolean(request.getParameter("esProveedor"));
+
+        try {
+            UsuarioService usuarioService = new UsuarioService();
+        
+            Usuario usuario = usuarioService.findById(usuarioId);
+        
+            usuario.setDireccion(direccion);
+            usuario.setFoto_perfil(fotoPerfil);
+            usuario.setOnboarding_completo(true);
+
+            usuarioService.update(usuario);
+
+            if(!esProveedor){
+                handleHomepage(request, response);
+                return;
+            }
+
+            Proveedor proveedor = new Proveedor();
+            proveedor.setUsuarioId(usuario.getId());
+            ProveedorService proveedorService = new ProveedorService();
+            proveedorService.save(proveedor);
+
+            handleOnboardingProveedor(request, response);
+            return;
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            request.setAttribute("errores", errores);
+            handleHomepage(request, response);
+        } 
+    }
+
+// PEDNIENTE! hookear estos dos do con 1. el front controller 2- los forms de las respectivas pgians
+
+    private void doCompleteOnboardingProveedor(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (!request.getMethod().equalsIgnoreCase("POST")) {
+            errores.add("Verbo incorrecto para /do-complete-onboarding-proveedor");
+            request.setAttribute("errores", errores);
+            // Redirige a homepage
+            handleHomepage(request, response);
+            return;
+        }
+
+        String proveedorId = request.getParameter("proveedorId");
+        String razonSocial = request.getParameter("razonSocial");
+        String nombreFantasia = request.getParameter("nombreFantasia");
+        String CUIT = request.getParameter("CUIT");
+        String tipoPersona = request.getParameter("tipoPersona");
+        // TODO: Añadir validador de cuit (ValidadorUtil.java)
+
+        try {
+            ProveedorService proveedorService = new ProveedorService();
+            Proveedor proveedor = proveedorService.findById(proveedorId);
+            
+            proveedor.setRazonSocial(razonSocial);
+            proveedor.setNombreFantasia(nombreFantasia);
+            proveedor.setCuit(CUIT);
+            proveedor.setTipoPersona(tipoPersona.toLowerCase() == "fisica"? TipoPersona.FISICA: TipoPersona.JURIDICA);
+            proveedor.setOnboardingCompleto(true);
+            proveedorService.update(proveedor);
+
+            return;
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            request.setAttribute("errores", errores);
+        } finally{
+            handleHomepage(request, response);
         }
     }
 }

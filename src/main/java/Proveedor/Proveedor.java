@@ -2,6 +2,7 @@ package Proveedor;
 
 public class Proveedor {
     private Integer id;
+    private Integer usuarioId;
     private String razonSocial;
     private String nombreFantasia;
     private String cuit;
@@ -18,7 +19,6 @@ public class Proveedor {
         this.nombreFantasia = nombreFantasia;
         this.cuit = cuit;
         this.tipoPersona = tipoPersona;
-
     }
 
     public Integer getId() {
@@ -67,6 +67,14 @@ public class Proveedor {
 
     public void setOnboardingCompleto(Boolean onboardingCompleto) {
         this.onboardingCompleto = onboardingCompleto;
+    }
+
+        public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
 }
