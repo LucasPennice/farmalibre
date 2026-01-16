@@ -4,12 +4,17 @@
 <div>
   <div class="topbar">
     <div class="search-wrapper">
-      <form  action="${pageContext.request.contextPath}/do-filter" method="post">
+      <form  action="${pageContext.request.contextPath}/do-filter" method="get">
         <img src="${pageContext.request.contextPath}/assets/images/lupa.png"/>
         <input
           type="text"
           name="filter"
           placeholder="Buscar droga por nombre, composición, o categoría"
+        />
+        <input
+          type="hidden"
+          name="categoriaId"
+          value="${param.categoriaId}"
         />
       </form>
     </div>
