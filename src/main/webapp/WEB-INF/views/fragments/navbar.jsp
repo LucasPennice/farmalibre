@@ -40,7 +40,7 @@
 
   <div class="auth-actions">
     <c:choose>
-      <c:when test="${not empty sessionScope.usuario}">
+      <c:when test="${not empty sessionScope.usuario_id}">
         <a href="${pageContext.request.contextPath}/auth/do-logout" class="register-link">
           <img src="${pageContext.request.contextPath}/assets/images/logout.png" class="accion_rapida_icono" />
           Cerrar Sesión

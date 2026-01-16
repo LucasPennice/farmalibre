@@ -122,6 +122,11 @@ public class FrontController extends HttpServlet {
             return;
         }
 
+        if (path.startsWith("/usuario-foto")) {
+            handleUsuarioFoto(request, response);
+            return;
+        }
+
         request.setAttribute("categorias", categorias);
         request.setAttribute("drogas", drogas);
         request.setAttribute("proveedores", proveedores);
@@ -314,6 +319,17 @@ public class FrontController extends HttpServlet {
         }
 
         request.setAttribute("drogaDTOs", drogaDTOs);
+        
+        HttpSession session = request.getSession(false);
+
+        if(session != null && session.getAttribute("usuario_id") != null) {
+            String usuarioId = session.getAttribute("usuario_id").toString();
+            UsuarioService usuarioService = new UsuarioService();
+            Usuario usuario = usuarioService.findById(usuarioId);
+
+            request.setAttribute("usuario", usuario);
+        }
+
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -397,7 +413,14 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        String usuarioId = request.getParameter("usuarioId");
+        HttpSession session = request.getSession(false);
+
+        if(session == null) return;
+
+        if(session.getAttribute("usuario_id") == null) return;
+
+        String usuarioId = session.getAttribute("usuario_id").toString();
+
         String direccion = request.getParameter("direccion");
 
         byte[] fotoPerfilBytes = null;
@@ -482,5 +505,36 @@ public class FrontController extends HttpServlet {
         } finally{
             handleHomepage(request, response);
         }
+    }
+    private void handleUsuarioFoto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("id");
+        if (id == null) {
+            response.sendError(400, "Falta parametro id");
+            return;
+        }
+
+        UsuarioService usuarioService = new UsuarioService();
+        Usuario usuario = usuarioService.findById(id);
+
+        if (usuario == null || usuario.getFoto_perfil() == null) {
+            response.sendError(404, "Foto no encontrada");
+            return;
+        }
+
+        byte[] foto = usuario.getFoto_perfil();
+
+        // Intentar detectar tipo; por defecto usar JPEG
+        String contentType = request.getServletContext().getMimeType("foto.jpg");
+        if (contentType == null) {
+            contentType = "image/jpeg";
+        }
+
+        response.setContentType(contentType);
+        response.setContentLength(foto.length);
+
+        response.getOutputStream().write(foto);
+        response.getOutputStream().flush();
     }
 }

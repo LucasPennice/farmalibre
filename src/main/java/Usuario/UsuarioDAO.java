@@ -157,7 +157,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
     @Override
     public void update(Usuario usuario) {
         log.info("Updating user with ID: " + usuario.getId());
-        String sql = "UPDATE usuario SET nombre_completo_responsable = ?, direccion = ?, foto_perfil = ?, rol = ? WHERE id = ?";
+        String sql = "UPDATE usuario SET nombre_completo_responsable = ?, direccion = ?, foto_perfil = ?, rol = ?, nombreUsuario = ?, passEncriptada = ?, onboarding_completo = ?, email = ? WHERE id = ?";
 
         try {
             startConnection();
@@ -165,8 +165,12 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
             ps.setString(1, usuario.getNombreCompletoRes());
             ps.setString(2, usuario.getDireccion());
             ps.setBytes(3, usuario.getFoto_perfil());
-            ps.setString(4, usuario.getRol().name()); // ✅ Convertir Enum a String
-            ps.setInt(5, usuario.getId());
+            ps.setString(4, usuario.getRol().name());
+            ps.setString(5, usuario.getNombreUsuario());
+            ps.setString(6, usuario.getPassEncriptada());
+            ps.setBoolean(7, usuario.getOnboarding_completo());
+            ps.setString(8, usuario.getEmail());
+            ps.setInt(9, usuario.getId());
 
             ps.executeUpdate();
             ps.close();

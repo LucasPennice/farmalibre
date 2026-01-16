@@ -18,6 +18,8 @@ public class AuthFilter implements Filter {
         boolean isPrivate = path.startsWith("/carrito") ||
                 path.startsWith("/inventario") ||
                 path.startsWith("/perfil") ||
+                path.startsWith("/onboarding_usuario") ||
+                path.startsWith("/onboarding_proveedor") ||
                 path.startsWith("/aprobar-categorias");
 
         boolean blockIfLogged = path.startsWith("/auth") && !path.startsWith("/auth/do-logout");
@@ -31,7 +33,7 @@ public class AuthFilter implements Filter {
         }
 
         if (!loggedIn && isPrivate) {
-            response.sendRedirect(request.getContextPath() + "/auth/register");
+            response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
 
