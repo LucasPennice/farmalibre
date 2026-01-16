@@ -45,6 +45,37 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
         return proveedor;
     }
 
+    public Proveedor findByUsuarioId(String usuarioId) {
+        Proveedor proveedor = null;
+        String sql = "SELECT * FROM proveedor WHERE usuario_id = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, usuarioId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                proveedor = new Proveedor();
+                proveedor.setId(rs.getInt("id"));
+                proveedor.setRazonSocial(rs.getString("razon_social"));
+                proveedor.setNombreFantasia(rs.getString("nombre_fantasia"));
+                proveedor.setCuit(rs.getString("cuit"));
+                proveedor.setTipoPersona(TipoPersona.valueOf(rs.getString("tipo_persona")));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede encontrar el proveedor");
+        } finally {
+            closeConnection();
+        }
+        return proveedor;
+    }
+
     @Override
     public LinkedList<Proveedor> findAll() {
         log.info("Finding all proveedores");

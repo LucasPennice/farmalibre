@@ -31,7 +31,11 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setNombreCompletoRes(rs.getString("nombre_completo_responsable"));
                 usuario.setDireccion(rs.getString("direccion"));
                 usuario.setFoto_perfil(rs.getBytes("foto_perfil"));
-                usuario.setRol(Rol.valueOf(rs.getString("rol"))); // ✅ Convertir String a Enum
+                usuario.setRol(Rol.valueOf(rs.getString("rol")));
+                usuario.setNombreUsuario((rs.getString("nombreUsuario")));
+                usuario.setPassEncriptada((rs.getString("passEncriptada")));
+                usuario.setEmail(rs.getString("email"));
+                usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
             }
 
             rs.close();

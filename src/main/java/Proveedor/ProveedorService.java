@@ -28,6 +28,22 @@ public class ProveedorService implements GenericService<Proveedor, String> {
             throw new RuntimeException(e.getMessage());
         }
     }
+  
+    public Proveedor findByUsuarioId(String usuarioId) {
+        try {
+            log.info("Buscando proveedor por usuario ID: " + usuarioId);
+            if (usuarioId == null || usuarioId.trim().isEmpty()) {
+                throw new IllegalArgumentException("El usuarioId del proveedor no puede ser nulo o vacío");
+            }
+            try {
+                return proveedorDAO.findByUsuarioId(usuarioId);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("El usuarioId debe ser valido");
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     @Override
     public LinkedList<Proveedor> findAll() {

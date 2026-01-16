@@ -23,7 +23,7 @@ public class AuthFilter implements Filter {
         boolean blockIfLogged = path.startsWith("/auth") && !path.startsWith("/auth/do-logout");
 
         HttpSession session = request.getSession(false);
-        boolean loggedIn = (session != null && session.getAttribute("usuario") != null);
+        boolean loggedIn = (session != null && session.getAttribute("usuario_id") != null);
 
         if(loggedIn && blockIfLogged){
             response.sendRedirect(request.getContextPath() + "/");

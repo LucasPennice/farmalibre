@@ -17,10 +17,23 @@ import Proveedor.Proveedor;
 import Proveedor.ProveedorService;
 import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
+import Usuario.Usuario;
 import Usuario.UsuarioService;
 import db.DatabaseInitializer;
 
+// TODO: Hacer vista onboarding comprador
+// TODO: Hacer vista onboarding proveedor
+// TODO: Cuando el usuario se loguea checkear si tiene onb completo y redirigir (a onv usuario o onb proveedor)
+// TODO: Redirigir automaticamente a onb comprador si usuario log y no termino onb
+// TODO: Redirigir automaticamente a onb proveedor si usuario log y es proveedor y no termino onb proveedor
+
 public class FrontController extends HttpServlet {
+
+    public FrontController() {
+        super(); // preserves the default HttpServlet initialization behavior
+        
+        // TODO: place custom initialization logic here that should run at construction time
+    }
     Logger log = Logger.getLogger(FrontController.class.getName());
 
     @Override
@@ -134,6 +147,8 @@ public class FrontController extends HttpServlet {
             return;
         }
 
+        onboardingFilter(request, response, errores, drogas);
+
         if (path.equals("/") || path.equals("/index")) {
             handleHomepage(request, response, drogas);
         } else if (path.startsWith("/carrito")) {
@@ -142,8 +157,10 @@ public class FrontController extends HttpServlet {
             handleLogin(request, response);
         } else if (path.startsWith("/auth/register")) {
             handleRegister(request, response);
-        } else if (path.startsWith("/onboarding")) {
-            handleOnboarding(request, response);
+        } else if (path.startsWith("/onboarding_usuario")) {
+            handleOnboardingUsuario(request, response);
+        } else if (path.startsWith("/onboarding_proveedor")) {
+            handleOnboardingProveedor(request, response);
         } else if (path.startsWith("/inventario")) {
             handleInventario(request, response);
         } else if (path.startsWith("/comprar-droga")) {
@@ -184,10 +201,50 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/pages/login.jsp").forward(request, response);
     }
 
-    private void handleOnboarding(HttpServletRequest request, HttpServletResponse response)
+    private void onboardingFilter(HttpServletRequest request, HttpServletResponse response, LinkedList<String> errores, LinkedList<Droga> drogas)
             throws ServletException, IOException {
-        request.setAttribute("pageTitle", "Onboarding");
-        request.getRequestDispatcher("/WEB-INF/views/pages/onboarding.jsp").forward(request, response);
+        try {
+            HttpSession session = request.getSession(false);
+
+            if(session == null) return;
+
+            if(session.getAttribute("usuario_id") == null) return;
+
+            String userId = session.getAttribute("usuario_id").toString();
+            
+            UsuarioService usuarioService = new UsuarioService();
+            Usuario usuario = usuarioService.findById(userId);
+
+            if(!usuario.getOnboarding_completo()) {
+                handleOnboardingUsuario(request, response);
+                return;
+            }
+
+            ProveedorService proveedorService = new ProveedorService();
+            Proveedor proveedor = proveedorService.findByUsuarioId(userId);
+
+            if(proveedor != null && !proveedor.getOnboardingCompleto()) {
+                handleOnboardingProveedor(request, response);
+                return;
+            }
+
+        } catch (Exception e) {
+            errores.add(e.getMessage()); 
+            request.setAttribute("errores", errores);
+            handleHomepage(request, response, drogas);
+        } 
+    }
+
+    private void handleOnboardingUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Onboarding Usuario");
+        request.getRequestDispatcher("/WEB-INF/views/pages/onboarding_usuario.jsp").forward(request, response);
+    }
+
+    private void handleOnboardingProveedor(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Onboarding Proveedor");
+        request.getRequestDispatcher("/WEB-INF/views/pages/onboarding_proveedor.jsp").forward(request, response);
     }
 
     private void handleInventario(HttpServletRequest request, HttpServletResponse response)
@@ -266,12 +323,12 @@ public class FrontController extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            UsuarioService.autenticar(nombre, password);
+            Usuario usuarioAutenticado = UsuarioService.autenticar(nombre, password);
 
             HttpSession session = request.getSession(true);
-            session.setAttribute("usuario", nombre);
+            session.setAttribute("usuario_id", usuarioAutenticado.getId());
 
-            return;
+            return onboardingFilter(request, response);
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
