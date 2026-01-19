@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import ActionController.actualizarInventario.ActualizarInventarioController;
+import ActionController.actualizarInventario.ItemInventarioDTO;
 import ActionController.buscarDrogas.BuscarDrogasController;
 import ActionController.buscarDrogas.DrogaDTO;
 import CategoriaDroga.CategoriaDroga;
@@ -24,6 +26,18 @@ import StockDroga.StockDrogaService;
 import Usuario.Usuario;
 import Usuario.UsuarioService;
 import db.DatabaseInitializer;
+
+// TODO: Habría que refactorizar el codigo cosa de que funciones como doLogin, doRegister y esas solo se preocupen por la logica que les corresponde y extraerlas a un controlador que tenga sentido
+// Entonces en este archivo quedaria algo como. La funcion (doLogin) no deberia conocer handleHomePage ni nada de ruteo en general
+
+// if(ruta){
+//     try{
+//         Controlador.doLogin()
+//     }catch{
+//         errores.add(etc)
+//         handleLogin
+//     }
+// }
 
 @MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class FrontController extends HttpServlet {
@@ -160,6 +174,24 @@ public class FrontController extends HttpServlet {
             doCompleteOnboardingUsuario(request, response);
             return;
         }
+        
+        if (path.startsWith("/do-delete-selected-items")) {
+            try {
+                String[] seleccionados = request.getParameterValues("selectedItems");
+                
+                if(seleccionados == null){
+                    throw new RuntimeException("No selecciono ningun item para borrar");
+                }
+
+                String userId = getUserIdFromSession(request);
+                ActualizarInventarioController.DeleteSelectedInventoryItems(userId, seleccionados);
+                handleInventario(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+            }
+        }
 
         onboardingFilter(request, response);
 
@@ -181,6 +213,10 @@ public class FrontController extends HttpServlet {
             handleDroga(request, response);
         } else if (path.startsWith("/perfil")) {
             handlePerfil(request, response);
+        } else if (path.startsWith("/actualizar-item")) {
+            handleActualizarItem(request, response);
+        } else if (path.startsWith("/add-item-a-inventario")) {
+            handleAddItemAInventario(request, response);
         } else if (path.startsWith("/aprobar-categorias")) {
             handleAprobarCategorias(request, response);
         } else {
@@ -194,6 +230,25 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Carrito");
         request.setAttribute("content", "/WEB-INF/views/pages/carrito.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+    }
+    
+    private void handleActualizarItem(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String itemIdAActualizar = request.getParameter("itemId");
+        ItemInventarioDTO itemToUpdate = ActualizarInventarioController.getItemToUpdate(itemIdAActualizar);
+
+        request.setAttribute("itemToUpdate", itemToUpdate);
+        request.setAttribute("pageTitle", "Actualizar Item");
+        request.setAttribute("content", "/WEB-INF/views/pages/actualizar-item.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+    }
+    
+    private void handleAddItemAInventario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Añadir item a inventario");
+        request.setAttribute("content", "/WEB-INF/views/pages/add-item-a-inventario.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
@@ -216,28 +271,6 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/pages/login.jsp").forward(request, response);
     }
 
-    private void onboardingFilter(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            String userId = getUserIdFromSession(request);
-
-            if(userId == null) return;
-
-            UsuarioService usuarioService = new UsuarioService();
-            Usuario usuario = usuarioService.findById(userId);
-
-            if (!usuario.getOnboarding_completo()) {
-                handleOnboardingUsuario(request, response);
-                return;
-            }
-
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-            request.setAttribute("errores", errores);
-            handleHomepage(request, response);
-        }
-    }
-
     private void handleOnboardingUsuario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Onboarding Usuario");
@@ -252,6 +285,16 @@ public class FrontController extends HttpServlet {
 
     private void handleInventario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        LinkedList<ItemInventarioDTO> items = new LinkedList<>();
+        try {
+            items.addAll(ActualizarInventarioController.getItems(getUserIdFromSession(request)));
+            request.setAttribute("items", items);        
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            handleHomepage(request, response);
+        }
+
         request.setAttribute("pageTitle", "Inventario");
         request.setAttribute("content", "/WEB-INF/views/pages/inventario.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -315,6 +358,28 @@ public class FrontController extends HttpServlet {
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+    }
+
+    private void onboardingFilter(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String userId = getUserIdFromSession(request);
+
+            if(userId == null) return;
+
+            UsuarioService usuarioService = new UsuarioService();
+            Usuario usuario = usuarioService.findById(userId);
+
+            if (!usuario.getOnboarding_completo()) {
+                handleOnboardingUsuario(request, response);
+                return;
+            }
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+            request.setAttribute("errores", errores);
+            handleHomepage(request, response);
+        }
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response)

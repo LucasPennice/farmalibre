@@ -113,7 +113,7 @@
               "
             >
               <div style="width: 40px; display: flex; justify-content: center; align-items: center;">
-                <input type="checkbox" name="selectedItems" value="${i.drogaId}" />
+                <input type="checkbox" name="selectedItems" value="itemId" />
               </div>
 
               <p style="flex: 1; text-align: center">${i.composicion}</p>
@@ -143,7 +143,7 @@
                 z-index: 1000;
               ">
                 <a href="${pageContext.request.contextPath}/actualizar-item" style="display: block; padding: 10px 12px; text-decoration: none; color: #111;">Actualizar Stock (Editar)</a>
-                <a href="${pageContext.request.contextPath}/do-delete-selected-items" style="display: block; padding: 10px 12px; text-decoration: none; color: #fd4949; border-top: 1px solid #eee;">Eliminar</a>
+                <a href="#" style="display: block; padding: 10px 12px; text-decoration: none; color: #fd4949; border-top: 1px solid #eee;">Eliminar</a>
               </div>
             </div>
           </c:forEach>
