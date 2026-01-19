@@ -143,7 +143,7 @@ public class ProveedorDAO extends AbstractDAO implements GenericDAO<Proveedor, S
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException("No se puede guardar el proveedor");
+            throw new RuntimeException("No se puede guardar el proveedor" + e.getMessage());
         } finally {
             closeConnection();
         }

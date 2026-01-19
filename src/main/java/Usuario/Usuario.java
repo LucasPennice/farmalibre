@@ -1,5 +1,8 @@
 package Usuario;
 
+import Proveedor.Proveedor;
+import Proveedor.ProveedorService;
+
 public class Usuario {
     private Integer id;
     private String nombreCompletoRes;
@@ -11,6 +14,8 @@ public class Usuario {
     private byte[] foto_perfil;
     private Rol rol;
     private Boolean onboarding_completo;
+    private Boolean esAdmin;
+    private Boolean esProveedor;
 
     public Usuario() {
     }
@@ -61,7 +66,7 @@ public class Usuario {
     public Rol getRol() {
         return rol;
     }
-
+    
     public void setRol(Rol rol) {
         this.rol = rol;
     }
@@ -96,5 +101,36 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getEsAdmin(){
+        return esAdmin;
+    }
+
+    public Boolean getEsProveedor(){
+        return esProveedor;
+    }
+
+    public void recalcularFlags() {
+        if( this.getRol() == Rol.ADMIN){
+            this.esAdmin = true;
+        }else{
+            this.esAdmin = false;
+        }
+
+        ProveedorService proveedorService = new ProveedorService();
+        
+        try {
+            Proveedor proveedor = proveedorService.findByUsuarioId(this.getId().toString());
+            
+            if(proveedor == null){
+                this.esProveedor = false;
+            }else{
+                this.esProveedor = true;
+            }
+        } catch (Exception e) {
+            this.esProveedor = false;
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

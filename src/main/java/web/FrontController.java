@@ -110,6 +110,8 @@ public class FrontController extends HttpServlet {
 
         errores.clear();
 
+        setUserAttribute(request);
+
         if (path.startsWith("/assets/")) {
             // Delegate static resources to the container's default servlet
             getServletContext()
@@ -128,7 +130,6 @@ public class FrontController extends HttpServlet {
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("errores", errores);
-        request.setAttribute("usuarioEsProveedor", errores);
 
         if (path.startsWith("/auth/do-register")) {
             doRegister(request, response);
@@ -188,6 +189,7 @@ public class FrontController extends HttpServlet {
 
     }
 
+
     private void handleCarrito(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("pageTitle", "Carrito");
@@ -218,6 +220,8 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String userId = getUserIdFromSession(request);
+
+            if(userId == null) return;
 
             UsuarioService usuarioService = new UsuarioService();
             Usuario usuario = usuarioService.findById(userId);
@@ -308,15 +312,6 @@ public class FrontController extends HttpServlet {
 
         request.setAttribute("drogaDTOs", drogaDTOs);
 
-        String usuarioId = getUserIdFromSession(request);
-
-        if (usuarioId != null) {
-            UsuarioService usuarioService = new UsuarioService();
-            Usuario usuario = usuarioService.findById(usuarioId);
-
-            request.setAttribute("usuario", usuario);
-        }
-
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -372,6 +367,7 @@ public class FrontController extends HttpServlet {
 
             HttpSession session = request.getSession(true);
             session.setAttribute("usuario_id", usuarioAutenticado.getId());
+            setUserAttribute(request);
 
             onboardingFilter(request, response);
             return;
@@ -414,6 +410,7 @@ public class FrontController extends HttpServlet {
         try {
             HttpSession session = request.getSession(false);
             session.invalidate();
+            setUserAttribute(request);
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
@@ -476,9 +473,6 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    // PEDNIENTE! hookear estos dos do con 1. el front controller 2- los forms de
-    // las respectivas pgians
-
     private void doCompleteOnboardingProveedor(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!request.getMethod().equalsIgnoreCase("POST")) {
@@ -506,6 +500,8 @@ public class FrontController extends HttpServlet {
             proveedor.setTipoPersona(tipoPersona.toLowerCase() == "fisica" ? TipoPersona.FISICA : TipoPersona.JURIDICA);
             proveedor.setOnboardingCompleto(true);
             proveedorService.save(proveedor);
+
+            setUserAttribute(request);
 
             return;
         } catch (Exception e) {
@@ -562,5 +558,23 @@ public class FrontController extends HttpServlet {
         String userId = session.getAttribute("usuario_id").toString();
 
         return userId;
+    }
+
+    private void setUserAttribute(HttpServletRequest request) {
+        try {
+            String usuarioId = getUserIdFromSession(request);
+
+            if (usuarioId == null) {
+                request.setAttribute("usuario", null);
+                return;
+            }
+            
+            UsuarioService usuarioService = new UsuarioService();
+            Usuario usuario = usuarioService.findById(usuarioId);
+            usuario.recalcularFlags();
+            request.setAttribute("usuario", usuario);
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
     }
 }

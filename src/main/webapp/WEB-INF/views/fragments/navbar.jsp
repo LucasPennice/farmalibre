@@ -23,17 +23,43 @@
   <div style="flex: 1"></div>
 
   <div class="contenedor_categorias">
-    <h1>Acciones Rápidas</h1>
+    <c:if test="${not empty usuario}">
+      <h1>Acciones Rápidas</h1>
 
-    <a href="${pageContext.request.contextPath}/onboarding_proveedor" class="contenedor_acciones_rapidas">
-      <div class="contenedor_acciones_rapidas_icono">
-        <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
-      </div>
+      <c:if test="${not usuario.esProveedor}">
+        <a href="${pageContext.request.contextPath}/onboarding_proveedor" class="contenedor_acciones_rapidas">
+          <div class="contenedor_acciones_rapidas_icono">
+            <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
+          </div>
 
-      <p>Hacerme Proveedor</p>
+          <p>Hacerme Proveedor</p>
+        </a>
+      </c:if>
+  
+      <c:if test="${usuario.esProveedor}">
+        <a href="${pageContext.request.contextPath}/inventario" class="contenedor_acciones_rapidas">
+          <div class="contenedor_acciones_rapidas_icono">
+            <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
+          </div>
 
-      <div class="aprobar_categorias_pendientes_bubble">5</div>
-    </a>
+          <p>Actualizar Inventario</p>
+        </a>
+      </c:if>
+    
+      <c:if test="${usuario.esAdmin}">
+        <a href="${pageContext.request.contextPath}/aprobar-categorias" class="contenedor_acciones_rapidas">
+          <div class="contenedor_acciones_rapidas_icono">
+            <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
+          </div>
+
+          <p>Aprobar Categorías</p>
+
+          <div class="aprobar_categorias_pendientes_bubble">5</div>
+        </a>
+      </c:if>
+    </c:if>
+
+
   </div>
 
   <div style="flex: 1"></div>

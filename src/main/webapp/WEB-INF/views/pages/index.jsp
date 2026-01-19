@@ -18,14 +18,12 @@
         />
       </form>
     </div>
-    <c:if test="${not empty sessionScope.usuario_id}">
+    <c:if test="${not empty usuario}">
       <a href="/farmalibre/carrito" class="cart">
         <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />
         <p class="badge">5</p>
       </a>
-    </c:if>
 
-    <c:if test="${not empty sessionScope.usuario_id}">
       <a href="/farmalibre/perfil" class="perfil_index_contenedor anchor_remove_styles">
         <div class="foto_farmacia">
           <img src="${pageContext.request.contextPath}/usuario-foto?id=${usuario.id}" style="height: 100%; width: 100%; border-radius: 100px;" />
