@@ -19,21 +19,35 @@
 
             <form class="auth-form" action="${pageContext.request.contextPath}/do-complete-onboarding-proveedor" method="post">
               <label class="field">
-                <span class="field__label">Nombre Completo*</span>
-                <input class="field__input" type="text" name="nombre" autocomplete="name" required/>
+                <span class="field__label">Razón Social*</span>
+                <input class="field__input" type="text" name="razonSocial" autocomplete="name" required/>
               </label>
 
               <label class="field">
-                <span class="field__label">Contraseña*</span>
-                <input class="field__input" type="password" name="password" autocomplete="new-password" required/>
+                <span class="field__label">Nombre Fantasía*</span>
+                <input class="field__input" type="text" name="nombreFantasia" autocomplete="" required/>
               </label>
 
-              <button class="primary-btn" type="submit">Iniciar Sesión</button>
+              <label class="field">
+                <span class="field__label">CUIT*</span>
+                <input class="field__input" type="text" name="CUIT" autocomplete="" required/>
+              </label>
 
-              <p class="auth-foot">
-                No nos conocemos?
-                <a class="auth-link" href="${pageContext.request.contextPath}/auth/register">Crear Cuenta</a>
-              </p>
+              <div class="field">
+                <span class="field__label">Tipo</span>
+                <div class="photo-type-toggle">
+                  <label class="toggle-option">
+                    <input type="radio" name="tipoPersona" value="true" checked />
+                    <span>Física</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="tipoPersona" value="false" />
+                    <span>Jurídica</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="primary-btn" type="submit">Siguiente</button>
             </form>
           </div>
         </section>

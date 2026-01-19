@@ -25,7 +25,7 @@
   <div class="contenedor_categorias">
     <h1>Acciones Rápidas</h1>
 
-    <a href="" class="contenedor_acciones_rapidas">
+    <a href="${pageContext.request.contextPath}/onboarding_proveedor" class="contenedor_acciones_rapidas">
       <div class="contenedor_acciones_rapidas_icono">
         <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
       </div>

@@ -25,12 +25,6 @@ import Usuario.Usuario;
 import Usuario.UsuarioService;
 import db.DatabaseInitializer;
 
-// TODO: Hacer vista onboarding comprador
-// TODO: Hacer vista onboarding proveedor
-// TODO: Cuando el usuario se loguea checkear si tiene onb completo y redirigir (a onv usuario o onb proveedor) ✅
-// TODO: Redirigir automaticamente a onb comprador si usuario log y no termino onb 
-// TODO: Redirigir automaticamente a onb proveedor si usuario log y es proveedor y no termino onb proveedor
-
 @MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class FrontController extends HttpServlet {
     LinkedList<String> errores = new LinkedList<String>();
@@ -113,6 +107,8 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getRequestURI().substring(request.getContextPath().length());
+
+        errores.clear();
 
         if (path.startsWith("/assets/")) {
             // Delegate static resources to the container's default servlet
@@ -238,14 +234,6 @@ public class FrontController extends HttpServlet {
                 return;
             }
 
-            ProveedorService proveedorService = new ProveedorService();
-            Proveedor proveedor = proveedorService.findByUsuarioId(userId);
-
-            if (proveedor != null && !proveedor.getOnboardingCompleto()) {
-                handleOnboardingProveedor(request, response);
-                return;
-            }
-
         } catch (Exception e) {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
@@ -326,10 +314,10 @@ public class FrontController extends HttpServlet {
         }
 
         request.setAttribute("drogaDTOs", drogaDTOs);
-        
+
         HttpSession session = request.getSession(false);
 
-        if(session != null && session.getAttribute("usuario_id") != null) {
+        if (session != null && session.getAttribute("usuario_id") != null) {
             String usuarioId = session.getAttribute("usuario_id").toString();
             UsuarioService usuarioService = new UsuarioService();
             Usuario usuario = usuarioService.findById(usuarioId);
@@ -454,9 +442,11 @@ public class FrontController extends HttpServlet {
 
         HttpSession session = request.getSession(false);
 
-        if(session == null) return;
+        if (session == null)
+            return;
 
-        if(session.getAttribute("usuario_id") == null) return;
+        if (session.getAttribute("usuario_id") == null)
+            return;
 
         String usuarioId = session.getAttribute("usuario_id").toString();
 
@@ -493,11 +483,6 @@ public class FrontController extends HttpServlet {
                 return;
             }
 
-            Proveedor proveedor = new Proveedor();
-            proveedor.setUsuarioId(usuario.getId());
-            ProveedorService proveedorService = new ProveedorService();
-            proveedorService.save(proveedor);
-
             handleOnboardingProveedor(request, response);
             return;
         } catch (Exception e) {
@@ -520,23 +505,31 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        String proveedorId = request.getParameter("proveedorId");
+        HttpSession session = request.getSession(false);
+
+        if (session == null)
+            return;
+
+        if (session.getAttribute("usuario_id") == null)
+            return;
+
+        String userId = session.getAttribute("usuario_id").toString();
         String razonSocial = request.getParameter("razonSocial");
         String nombreFantasia = request.getParameter("nombreFantasia");
         String CUIT = request.getParameter("CUIT");
         String tipoPersona = request.getParameter("tipoPersona");
-        // TODO: Añadir validador de cuit (ValidadorUtil.java)
 
         try {
             ProveedorService proveedorService = new ProveedorService();
-            Proveedor proveedor = proveedorService.findById(proveedorId);
+            Proveedor proveedor = new Proveedor();
 
+            proveedor.setUsuarioId(Integer.valueOf(userId));
             proveedor.setRazonSocial(razonSocial);
             proveedor.setNombreFantasia(nombreFantasia);
             proveedor.setCuit(CUIT);
             proveedor.setTipoPersona(tipoPersona.toLowerCase() == "fisica" ? TipoPersona.FISICA : TipoPersona.JURIDICA);
             proveedor.setOnboardingCompleto(true);
-            proveedorService.update(proveedor);
+            proveedorService.save(proveedor);
 
             return;
         } catch (Exception e) {
@@ -546,6 +539,7 @@ public class FrontController extends HttpServlet {
             handleHomepage(request, response);
         }
     }
+
     private void handleUsuarioFoto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
