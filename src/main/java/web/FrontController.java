@@ -128,6 +128,7 @@ public class FrontController extends HttpServlet {
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("errores", errores);
+        request.setAttribute("usuarioEsProveedor", errores);
 
         if (path.startsWith("/auth/do-register")) {
             doRegister(request, response);
@@ -216,15 +217,7 @@ public class FrontController extends HttpServlet {
     private void onboardingFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HttpSession session = request.getSession(false);
-
-            if (session == null)
-                return;
-
-            if (session.getAttribute("usuario_id") == null)
-                return;
-
-            String userId = session.getAttribute("usuario_id").toString();
+            String userId = getUserIdFromSession(request);
 
             UsuarioService usuarioService = new UsuarioService();
             Usuario usuario = usuarioService.findById(userId);
@@ -315,10 +308,9 @@ public class FrontController extends HttpServlet {
 
         request.setAttribute("drogaDTOs", drogaDTOs);
 
-        HttpSession session = request.getSession(false);
+        String usuarioId = getUserIdFromSession(request);
 
-        if (session != null && session.getAttribute("usuario_id") != null) {
-            String usuarioId = session.getAttribute("usuario_id").toString();
+        if (usuarioId != null) {
             UsuarioService usuarioService = new UsuarioService();
             Usuario usuario = usuarioService.findById(usuarioId);
 
@@ -440,15 +432,7 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession(false);
-
-        if (session == null)
-            return;
-
-        if (session.getAttribute("usuario_id") == null)
-            return;
-
-        String usuarioId = session.getAttribute("usuario_id").toString();
+        String usuarioId = getUserIdFromSession(request);
 
         String direccion = request.getParameter("direccion");
 
@@ -505,15 +489,7 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession(false);
-
-        if (session == null)
-            return;
-
-        if (session.getAttribute("usuario_id") == null)
-            return;
-
-        String userId = session.getAttribute("usuario_id").toString();
+        String userId = getUserIdFromSession(request);
         String razonSocial = request.getParameter("razonSocial");
         String nombreFantasia = request.getParameter("nombreFantasia");
         String CUIT = request.getParameter("CUIT");
@@ -570,5 +546,21 @@ public class FrontController extends HttpServlet {
 
         response.getOutputStream().write(foto);
         response.getOutputStream().flush();
+    }
+
+    private String getUserIdFromSession(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+
+        if (session == null){
+            return null;
+        }
+                
+        if (session.getAttribute("usuario_id") == null){
+            return null;
+        }
+
+        String userId = session.getAttribute("usuario_id").toString();
+
+        return userId;
     }
 }
