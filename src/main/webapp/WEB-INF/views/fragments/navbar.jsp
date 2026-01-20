@@ -54,7 +54,7 @@
 
           <p>Aprobar Categorías</p>
 
-          <div class="aprobar_categorias_pendientes_bubble">5</div>
+          <div class="aprobar_categorias_pendientes_bubble">${cantidadCategoriasPendientes}</div>
         </a>
       </c:if>
     </c:if>
