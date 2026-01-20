@@ -290,6 +290,23 @@ public class FrontController extends HttpServlet {
 
     private void handleDroga(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+                
+        String drogaId = request.getParameter("drogaId");
+        DrogaService drogaService = new DrogaService();
+        Droga droga = drogaService.findById(drogaId);
+        DrogaDTO drogaAComprar = BuscarDrogasController.buscarDroga(droga);
+
+        ProveedorService proveedorService = new ProveedorService();
+        for (StockDroga stock : stockDrogas) {
+            if (stock.getDroga().getId().equals(Integer.parseInt(drogaId))) {
+                stock.setDroga(droga); 
+                stock.setProveedor(proveedorService.findById(String.valueOf(stock.getProveedor().getId())));
+            }
+        }
+        
+        request.setAttribute("droga", drogaAComprar);
+        request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("pageTitle", "Compra de Drogas");
         request.setAttribute("content", "/WEB-INF/views/pages/droga.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);

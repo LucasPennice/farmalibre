@@ -635,3 +635,197 @@
   transition: 200ms;
   border: 1px solid #999999;
 }
+
+/* DROGA.JSP */
+
+.droga-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.droga-back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.droga-back-icon {
+  font-size: 18px;
+}
+
+.droga-header {
+  display: flex;
+  gap: 16px;
+}
+
+.droga-info-panel {
+  flex: 1;
+  background: #f7f7f7;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.droga-formula {
+  font-size: 96px;
+  font-weight: 600;
+  color: #2c2c2c;
+  letter-spacing: 2px;
+}
+
+.droga-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.droga-name {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+.droga-category-badge {
+  display: inline-block;
+  background: #eaeaea;
+  color: #666;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.droga-purchase-panel {
+  width: 340px;
+  background: #f7f7f7;
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.droga-quantity-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.droga-quantity-label {
+  margin: 0;
+  color: #666;
+  font-weight: 600;
+}
+
+.droga-quantity-hint {
+  margin: 2px 0 8px;
+  color: #9f9f9f;
+  font-size: 12px;
+}
+
+.droga-quantity-select {
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.droga-shipping-info {
+  background: #ededed;
+  border-radius: 10px;
+  padding: 10px;
+  color: #888;
+  font-size: 12px;
+}
+
+.droga-shipping-cost {
+  color: #666;
+  font-weight: 600;
+}
+
+.droga-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.droga-btn {
+  all: unset;
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 200ms;
+}
+
+.droga-btn-primary {
+  background: #2763fd;
+  color: white;
+}
+
+.droga-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 99, 253, 0.3);
+}
+
+.droga-btn-secondary {
+  background: #ededed;
+  color: #555;
+}
+
+.droga-btn-secondary:hover {
+  background: #ddd;
+}
+
+.droga-table-container {
+  background: #f7f7f7;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.droga-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.droga-table thead tr {
+  height: 52px;
+}
+
+.droga-table th {
+  text-align: left;
+  padding: 12px 16px;
+  color: #666;
+  font-weight: 600;
+  background: #f7f7f7;
+}
+
+.droga-table tbody tr {
+  border-top: 1px solid #eee;
+}
+
+.droga-table td {
+  padding: 16px;
+}
+
+.droga-table-select {
+  width: 140px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
