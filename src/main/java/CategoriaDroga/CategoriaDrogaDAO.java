@@ -40,6 +40,32 @@ public class CategoriaDrogaDAO extends AbstractDAO implements GenericDAO<Categor
         return categoria;
     }
 
+    public CategoriaDroga findByName(String nombre) {
+        log.info("Finding categoria_droga by nombre: " + nombre);
+        CategoriaDroga categoria = null;
+        String sql = "SELECT * FROM categoria_droga WHERE nombre = ?";
+
+        try {
+            startConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, nombre);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                categoria = mapCategoria(rs);
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se pudieron cargar la categoría." + e.getMessage());
+        } finally {
+            closeConnection();
+        }
+        return categoria;
+    }
+
     @Override
     public LinkedList<CategoriaDroga> findAll() {
         log.info("Finding all categorias_droga");

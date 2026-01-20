@@ -3,12 +3,20 @@ package ActionController.actualizarInventario;
 public class ItemInventarioDTO {
     private String composicion;
     private String drogaId;
+    private String stockDrogaId;
     private String nombreDroga;
     private Integer disponible;
     private Double precioUnitario;
     private String nombreCategoria;
     private String unidad;
     private Boolean aprobacion_pendiente;
+    
+    public String getStockDrogaId() {
+        return stockDrogaId;
+    }
+    public void setStockDrogaId(String stockDrogaId) {
+        this.stockDrogaId = stockDrogaId;
+    }
     
     public String getDrogaId() {
         return drogaId;

@@ -21,6 +21,16 @@ public class CategoriaDrogaService implements GenericService<CategoriaDroga, Str
             throw new RuntimeException(e.getMessage());
         }
     }
+    
+    public CategoriaDroga findByName(String nombre) {
+        try {
+            log.info("Buscando categoria_droga por nombre: " + nombre);
+            
+            return categoriaDAO.findByName(nombre);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     @Override
     public LinkedList<CategoriaDroga> findAll() {

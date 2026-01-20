@@ -3,6 +3,6 @@
 
 <html>
   <body>
-    <h2>carrito!!!</h2>
+    <h2>aprobar categorias!!!</h2>
   </body>
 </html>

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import ActionController.actualizarInventario.ActualizarInventarioController;
 import ActionController.actualizarInventario.ItemInventarioDTO;
+import ActionController.administrarTiposDrogaYCategorias.AdministrarTiposDrogaYCategorias;
 import ActionController.buscarDrogas.BuscarDrogasController;
 import ActionController.buscarDrogas.DrogaDTO;
 import CategoriaDroga.CategoriaDroga;
@@ -50,48 +51,7 @@ public class FrontController extends HttpServlet {
     public FrontController() {
         super();
 
-        // Fetch de Cateogrias con error handling
-        try {
-            CategoriaDrogaService categoriaDrogaService;
-            categoriaDrogaService = new CategoriaDrogaService();
-            categorias.addAll(categoriaDrogaService.findAll());
-
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Drogas con error handling
-
-        try {
-            DrogaService drogaService;
-            drogaService = new DrogaService();
-            drogas.addAll(drogaService.findAll());
-
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Proveedores con error handling
-
-        try {
-            ProveedorService proveedorService;
-            proveedorService = new ProveedorService();
-            proveedores.addAll(proveedorService.findAll());
-
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
-
-        // Fetch de Stock Drogas con error handling
-
-        try {
-            StockDrogaService stockDrogaService;
-            stockDrogaService = new StockDrogaService();
-            stockDrogas.addAll(stockDrogaService.findAll());
-
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-        }
+       fetchNewState();
     }
 
     Logger log = Logger.getLogger(FrontController.class.getName());
@@ -118,6 +78,8 @@ public class FrontController extends HttpServlet {
         processRequest(request, response);
     }
 
+
+
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getRequestURI().substring(request.getContextPath().length());
@@ -139,11 +101,7 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        request.setAttribute("categorias", categorias);
-        request.setAttribute("drogas", drogas);
-        request.setAttribute("proveedores", proveedores);
-        request.setAttribute("stockDrogas", stockDrogas);
-        request.setAttribute("errores", errores);
+        updateState(request);
 
         if (path.startsWith("/auth/do-register")) {
             doRegister(request, response);
@@ -175,6 +133,74 @@ public class FrontController extends HttpServlet {
             return;
         }
         
+        if (path.startsWith("/do-actualizar-inventario")) {
+            try {
+                String userId = getUserIdFromSession(request);
+                String drogaId = request.getParameter("drogaId");
+                Integer disponible = Integer.parseInt(request.getParameter("disponible")); 
+                Double precioUnitario = Double.parseDouble(request.getParameter("precioUnitario"));
+
+                ActualizarInventarioController.ActualizarItemInventario(userId, drogaId, disponible, precioUnitario);
+
+                fetchNewState();
+                updateState(request);
+
+                handleInventario(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+        
+        if (path.startsWith("/do-add-item-to-inventario")) {
+            try {
+                String userId = getUserIdFromSession(request);
+                String drogaId = request.getParameter("drogaId");
+                Integer disponible = Integer.parseInt(request.getParameter("disponible")); 
+                Double precioUnitario = Double.parseDouble(request.getParameter("precioUnitario"));
+
+                ActualizarInventarioController.AddItemInventario(userId, drogaId, disponible, precioUnitario);
+                
+                fetchNewState();
+                updateState(request);
+
+                handleInventario(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+
+        if (path.startsWith("/do-cargar-nuevo-tipo-droga")) {
+            try {
+                String userId = getUserIdFromSession(request);
+                String nombreDroga = request.getParameter("nombreDroga");
+                String composicion = request.getParameter("composicion");
+                String unidad = request.getParameter("unidad");
+                String nombreCategoria = request.getParameter("nombreCategoria");
+
+                if(nombreCategoria.isEmpty() || nombreCategoria.isBlank()){
+                    throw new RuntimeException("La categoría no puede estar vacia");
+                }
+
+                AdministrarTiposDrogaYCategorias.CargarNuevoTipoDroga(userId,nombreDroga,composicion,unidad,nombreCategoria);
+
+                fetchNewState();
+                updateState(request);
+
+                handleAddItemAInventario(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+        
         if (path.startsWith("/do-delete-selected-items")) {
             try {
                 String[] seleccionados = request.getParameterValues("selectedItems");
@@ -190,6 +216,7 @@ public class FrontController extends HttpServlet {
             } catch (Exception e) {
                 errores.add(e.getMessage());
                 handleHomepage(request, response);
+                return;
             }
         }
 
@@ -217,6 +244,8 @@ public class FrontController extends HttpServlet {
             handleActualizarItem(request, response);
         } else if (path.startsWith("/add-item-a-inventario")) {
             handleAddItemAInventario(request, response);
+        } else if (path.startsWith("/cargar-nuevo-tipo-droga")) {
+            handleCargarNuevoTipoDroga(request, response);
         } else if (path.startsWith("/aprobar-categorias")) {
             handleAprobarCategorias(request, response);
         } else {
@@ -233,13 +262,20 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
     
+    private void handleCargarNuevoTipoDroga(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Cargar Nuevo Tipo Droga");
+        request.setAttribute("content", "/WEB-INF/views/pages/cargar-nuevo-tipo-droga.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+    }
+    
     private void handleActualizarItem(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String itemIdAActualizar = request.getParameter("itemId");
         ItemInventarioDTO itemToUpdate = ActualizarInventarioController.getItemToUpdate(itemIdAActualizar);
-
+        
         request.setAttribute("itemToUpdate", itemToUpdate);
+
         request.setAttribute("pageTitle", "Actualizar Item");
         request.setAttribute("content", "/WEB-INF/views/pages/actualizar-item.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
@@ -286,13 +322,14 @@ public class FrontController extends HttpServlet {
     private void handleInventario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        LinkedList<ItemInventarioDTO> items = new LinkedList<>();
+        LinkedList<ItemInventarioDTO> inventoryItems = new LinkedList<>();
         try {
-            items.addAll(ActualizarInventarioController.getItems(getUserIdFromSession(request)));
-            request.setAttribute("items", items);        
+            inventoryItems.addAll(ActualizarInventarioController.getItems(getUserIdFromSession(request)));
+            request.setAttribute("inventoryItems", inventoryItems);        
         } catch (Exception e) {
             errores.add(e.getMessage());
             handleHomepage(request, response);
+            return;
         }
 
         request.setAttribute("pageTitle", "Inventario");
@@ -311,7 +348,7 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
 
         request.setAttribute("pageTitle", "Aprobar Categorías");
-        request.setAttribute("content", "/WEB-INF/views/pages/aprobarCategorias.jsp");
+        request.setAttribute("content", "/WEB-INF/views/pages/aprobar-categorias.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
@@ -379,6 +416,7 @@ public class FrontController extends HttpServlet {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
             handleHomepage(request, response);
+            return;
         }
     }
 
@@ -466,6 +504,7 @@ public class FrontController extends HttpServlet {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
             handleHomepage(request, response);
+            return;
         }
     }
 
@@ -535,6 +574,7 @@ public class FrontController extends HttpServlet {
             errores.add(e.getMessage());
             request.setAttribute("errores", errores);
             handleHomepage(request, response);
+            return;
         }
     }
 
@@ -641,5 +681,67 @@ public class FrontController extends HttpServlet {
         } catch (Exception e) {
             errores.add(e.getMessage());
         }
+    }
+
+    private void fetchNewState(){
+        // IMPORTANT: This function does not update the request attributes. So even after it runs the changes might not be reflected in the UI
+        // for that run the updateState function as well
+
+        errores.clear();
+        drogas.clear();
+        proveedores.clear();
+        stockDrogas.clear();
+        stockDrogas.clear();
+        categorias.clear();
+
+        try {
+            CategoriaDrogaService categoriaDrogaService;
+            categoriaDrogaService = new CategoriaDrogaService();
+            categorias.addAll(categoriaDrogaService.findAll());
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Drogas con error handling
+
+        try {
+            DrogaService drogaService;
+            drogaService = new DrogaService();
+            drogas.addAll(drogaService.findAll());
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Proveedores con error handling
+
+        try {
+            ProveedorService proveedorService;
+            proveedorService = new ProveedorService();
+            proveedores.addAll(proveedorService.findAll());
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+
+        // Fetch de Stock Drogas con error handling
+
+        try {
+            StockDrogaService stockDrogaService;
+            stockDrogaService = new StockDrogaService();
+            stockDrogas.addAll(stockDrogaService.findAll());
+
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+    }
+
+    private void updateState(HttpServletRequest request){
+        request.setAttribute("categorias", categorias);
+        request.setAttribute("drogas", drogas);
+        request.setAttribute("stockDrogas", stockDrogas);
+        request.setAttribute("proveedores", proveedores);
+        request.setAttribute("errores", errores);
     }
 }

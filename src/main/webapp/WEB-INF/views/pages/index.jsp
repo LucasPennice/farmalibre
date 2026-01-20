@@ -26,7 +26,7 @@
 
       <a href="/farmalibre/perfil" class="perfil_index_contenedor anchor_remove_styles">
         <div class="foto_farmacia">
-          <img src="${pageContext.request.contextPath}/usuario-foto?id=${usuario.id}" style="height: 100%; width: 100%; border-radius: 100px;" />
+          <img src="${pageContext.request.contextPath}/usuario-foto?id=${usuario.id}" style="height: 100%; width: 100%; border-radius: 100px; object-fit: cover;" />
         </div>
 
         <p class="farmacia_nombre">${usuario.nombreCompletoRes}</p>

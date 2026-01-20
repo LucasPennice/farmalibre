@@ -20,7 +20,8 @@ public class AuthFilter implements Filter {
                 path.startsWith("/perfil") ||
                 path.startsWith("/onboarding_usuario") ||
                 path.startsWith("/onboarding_proveedor") ||
-                // path.startsWith("/add-item-a-inventario") ||
+                path.startsWith("/add-item-a-inventario") ||
+                path.startsWith("/cargar-nuevo-tipo-droga") ||
                 path.startsWith("/actualizar-item") ||
                 path.startsWith("/do-delete-selected-items") ||
                 path.startsWith("/aprobar-categorias");
