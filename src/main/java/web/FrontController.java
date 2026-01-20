@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 
 import ActionController.actualizarInventario.ActualizarInventarioController;
 import ActionController.actualizarInventario.ItemInventarioDTO;
+import ActionController.actualizarPerfil.ActualizarPerfilController;
+import ActionController.actualizarPerfil.PerfilInfoDTO;
 import ActionController.administrarTiposDrogaYCategorias.AdministrarTiposDrogaYCategorias;
 import ActionController.buscarDrogas.BuscarDrogasController;
 import ActionController.buscarDrogas.DrogaDTO;
@@ -277,6 +279,39 @@ public class FrontController extends HttpServlet {
             }
         }
 
+        if (path.startsWith("/do-actualizar-perfil")) {
+            try {
+                String usuarioId = getUserIdFromSession(request);
+                String nombreDelResponsable = request.getParameter("nombreDelResponsable");
+                String emailDeContacto = request.getParameter("emailDeContacto");
+                String direccionDelResponsable = request.getParameter("direccionDelResponsable");
+                Part fotoPerfil = request.getPart("fotoPerfil");
+                
+                UsuarioService usuarioService = new UsuarioService();
+                Usuario usuario = usuarioService.findById(usuarioId);
+                usuario.recalcularFlags();
+
+                Boolean esProveedor = usuario.getEsProveedor();
+
+                String razonSocial = request.getParameter("razonSocial");
+                String nombreFantasia = request.getParameter("nombreFantasia");
+                String CUIT = request.getParameter("CUIT");
+                TipoPersona tipoPersona = request.getParameter("tipoPersona") == TipoPersona.FISICA.toString() ? TipoPersona.FISICA : TipoPersona.JURIDICA;
+
+                ActualizarPerfilController.Actualizar(usuarioId, nombreDelResponsable, emailDeContacto,direccionDelResponsable, fotoPerfil, esProveedor, razonSocial, nombreFantasia, CUIT, tipoPersona);
+
+                fetchNewState();
+                updateState(request);
+
+                handleHomepage(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+
         onboardingFilter(request, response);
 
         if (path.equals("/") || path.equals("/index")) {
@@ -398,6 +433,10 @@ public class FrontController extends HttpServlet {
 
     private void handlePerfil(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String userId = getUserIdFromSession(request);
+        PerfilInfoDTO perfilData = ActualizarPerfilController.getItem(userId);
+        request.setAttribute("perfilData", perfilData);
+
         request.setAttribute("pageTitle", "Perfil");
         request.setAttribute("content", "/WEB-INF/views/pages/perfil.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
