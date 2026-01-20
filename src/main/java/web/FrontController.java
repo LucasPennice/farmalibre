@@ -297,16 +297,20 @@ public class FrontController extends HttpServlet {
         Droga droga = drogaService.findById(drogaId);
         DrogaDTO drogaAComprar = BuscarDrogasController.buscarDroga(droga);
 
+        Integer cantidadStockDroga = 0;
+
         ProveedorService proveedorService = new ProveedorService();
         for (StockDroga stock : stockDrogas) {
             if (stock.getDroga().getId().equals(Integer.parseInt(drogaId))) {
                 stock.setDroga(droga); 
                 stock.setProveedor(proveedorService.findById(String.valueOf(stock.getProveedor().getId())));
+                cantidadStockDroga += stock.getDisponible();
             }
         }
         
         request.setAttribute("droga", drogaAComprar);
         request.setAttribute("stockDrogas", stockDrogas);
+        request.setAttribute("cantidadStockDroga", cantidadStockDroga);
         request.setAttribute("pageTitle", "Compra de Drogas");
         request.setAttribute("content", "/WEB-INF/views/pages/droga.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);

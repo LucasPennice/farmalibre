@@ -829,3 +829,12 @@
   font-size: 14px;
   cursor: pointer;
 }
+
+.droga-table-input {
+  width: 140px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0 8px;
+  font-size: 14px;
+}

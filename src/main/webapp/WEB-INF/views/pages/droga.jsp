@@ -27,15 +27,16 @@
     <!-- Panel de compra rápida -->
     <div class="droga-purchase-panel">
       <div class="droga-quantity-section">
-        <p class="droga-quantity-label">Cantidad</p>
-        <p class="droga-quantity-hint">Productos seleccionados del proveedor más económico siempre que sea posible</p>
-        <select id="cantidadSelect" class="droga-quantity-select">
-          <option value="1">1 ${droga.unidad}</option>
-          <option value="5">5 ${droga.unidad}</option>
-          <option value="10">10 ${droga.unidad}</option>
-          <option value="25">25 ${droga.unidad}</option>
-          <option value="50">50 ${droga.unidad}</option>
-        </select>
+        <p class="droga-quantity-label">Cantidad <span style="font-weight: 300; font-size: 12px">(Disponible ${cantidadStockDroga})</span></p>
+        <p class="droga-quantity-hint">Ingresá la cantidad deseada; se distribuirá entre proveedores empezando por el más económico</p>
+        <input
+          id="cantidadInput"
+          class="droga-quantity-select"
+          type="number"
+          min="1"
+          max="${cantidadStockDroga}"
+          value="1"
+        />
       </div>
       <div class="droga-shipping-info">
         El costo de envío aumentó porque se requieren más de un proveedor para satisfacer su pedido
@@ -81,11 +82,14 @@
               <td>$${s.precioUnitario} / ${droga.unidad}</td>
               <td>${s.disponible}</td>
               <td>
-                <select class="droga-table-select">
-                  <option>1 ${droga.unidad}</option>
-                  <option>5 ${droga.unidad}</option>
-                  <option>10 ${droga.unidad}</option>
-                </select>
+                <input
+                  class="droga-table-select droga-table-input"
+                  type="number"
+                  min="0"
+                  max="${s.disponible}"
+                  value="0"
+                  data-available="${s.disponible}"
+                />
               </td>
             </tr>
           </c:if>
@@ -97,11 +101,46 @@
   <script>
     (function () {
       var minPrecio = Number('${minPrecio}');
-      var select = document.getElementById('cantidadSelect');
+      var cantidadInput = document.getElementById('cantidadInput');
       var costoEnvioEl = document.getElementById('costoEnvio');
+      var distribInputs = Array.from(document.querySelectorAll('.droga-table-input'));
+      var errorEl = document.createElement('div');
 
-      function actualizarCosto() {
-        var cantidad = Number(select.value || 0);
+      // TODO reemplazar luego, por ahora queda fijo asi
+      var ENVIO_FIJO_POR_PROVEEDOR = 5000;
+      errorEl.style.color = '#d32f2f';
+      errorEl.style.fontSize = '12px';
+      errorEl.style.marginTop = '6px';
+      cantidadInput.parentElement.appendChild(errorEl);
+
+      function calcularEnvioYMensaje(total) {
+        var proveedoresUsados = distribInputs.filter(function (input) {
+          return Number(input.value || 0) > 0;
+        }).length;
+
+        if (!total || total <= 0) {
+          costoEnvioEl.textContent = '—';
+          document.querySelector('.droga-shipping-info').style.display = 'none';
+          return;
+        }
+
+        // Envío dummy: $5000 por proveedor
+        var envio = proveedoresUsados * ENVIO_FIJO_POR_PROVEEDOR;
+        costoEnvioEl.textContent = envio ? (envio + '$') : '—';
+
+        // Mostrar/ocultar mensaje si hay más de un proveedor
+        var info = document.querySelector('.droga-shipping-info');
+        if (info) info.style.display = proveedoresUsados > 1 ? 'block' : 'none';
+      }
+
+      function setButtonsDisabled(disabled) {
+        document.querySelectorAll('.droga-btn').forEach(function (btn) {
+          btn.style.pointerEvents = disabled ? 'none' : 'auto';
+          btn.style.opacity = disabled ? '0.5' : '1';
+        });
+      }
+
+      function recalcularEnvio(cantidad) {
         if (!minPrecio || !cantidad) {
           costoEnvioEl.textContent = '—';
           return;
@@ -111,8 +150,79 @@
         costoEnvioEl.textContent = envio + '$';
       }
 
-      select.addEventListener('change', actualizarCosto);
-      actualizarCosto();
+      function autocompletarDistribucion(total) {
+        var restante = total;
+        distribInputs.forEach(function (input) {
+          var max = Number(input.dataset.available) || 0;
+          var asignado = Math.max(0, Math.min(restante, max));
+          input.value = asignado;
+          restante -= asignado;
+        });
+      }
+
+      function validarDistribucion() {
+        var total = Number(cantidadInput.value || 0);
+        var suma = 0;
+
+        distribInputs.forEach(function (input) {
+          var max = Number(input.dataset.available) || 0;
+          var val = Math.max(0, Number(input.value || 0));
+          if (val > max) {
+            val = max;
+            input.value = val;
+          }
+          suma += val;
+        });
+
+        if (!total || total < 0) {
+          errorEl.textContent = 'Ingresá una cantidad válida.';
+          setButtonsDisabled(true);
+          recalcularEnvio(0);
+          return false;
+        }
+
+        if (suma > total) {
+          errorEl.textContent = 'La distribución supera la cantidad seleccionada.';
+          setButtonsDisabled(true);
+          recalcularEnvio(total);
+          return false;
+        }
+
+        if (suma < total) {
+          errorEl.textContent = 'La distribución entre proveedores no es igual a la cantidad seleccionada.';
+          setButtonsDisabled(true);
+          recalcularEnvio(total);
+          return false;
+        }
+
+        if (suma == total) {
+          errorEl.textContent = '';
+          setButtonsDisabled(false);
+          calcularEnvioYMensaje(total);
+          return true;
+        }
+
+        errorEl.textContent = '';
+        setButtonsDisabled(false);
+        recalcularEnvio(total);
+        return true;
+      }
+
+      // Cuando cambia la cantidad total, auto-distribuimos respetando stock disponible
+      cantidadInput.addEventListener('input', function () {
+        var total = Number(cantidadInput.value || 0);
+        autocompletarDistribucion(total);
+        validarDistribucion();
+      });
+
+      // Cuando el usuario ajusta la distribución manual
+      distribInputs.forEach(function (input) {
+        input.addEventListener('input', validarDistribucion);
+      });
+
+      // Inicializar
+      autocompletarDistribucion(Number(cantidadInput.value || 0));
+      validarDistribucion();
     })();
   </script>
 </div>
