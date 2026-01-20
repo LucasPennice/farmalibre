@@ -11,7 +11,7 @@
         margin-bottom: 12px
       "
     >
-      <p style="font-size: 36; font-weight: 500">Aprobar Categoria</p>
+      <p style="font-size: 36; font-weight: 500">Administrar Categorias</p>
     </div>
 
     <div style="border: 1px solid #999999; border-radius: 16px; overflow: hidden">
@@ -35,7 +35,7 @@
       </div>
 
         <!-- Tabla -->
-          <c:forEach var="c" items="${categoriasPendientes}">
+          <c:forEach var="c" items="${categorias}">
             <div style="
                   width: 100%;
                   min-height: 100vh;
@@ -52,12 +52,22 @@
                 <p style="flex: 1; text-align: center">${c.id}</p>
                 <p style="flex: 1; text-align: center">${c.nombre}</p>
                 <p style="flex: 1; text-align: center">
-                   <span style="
+                  <c:if test="${not c.aprobacion_pendiente}">
+                    <span style="
+                        color: #0F1F12;
+                        background-color: #78DD885A;
+                        padding: 5px 16px;
+                        border-radius: 12px;
+                    ">Aprobada</span>
+                  </c:if>
+                  <c:if test="${c.aprobacion_pendiente}">
+                    <span style="
                       color: #2D2901;
                       background-color: #FFC96C5A;
                       padding: 5px 16px;
                       border-radius: 12px;
                   ">Pendiente</span>
+                  </c:if>
                 </p>
             
               <div style="width: 40px; position: relative; display: flex; justify-content: center; align-items: center;">
@@ -77,8 +87,13 @@
                   min-width: 140px;
                   z-index: 1000;
                 ">
-                  <a href="${pageContext.request.contextPath}/do-aprobar-categoria?categoriaId=${c.id}" style="display: block; padding: 10px 12px; text-decoration: none; color: #111;">Aprobar</a>
-                  <a href="${pageContext.request.contextPath}/do-rechazar-categoria?categoriaId=${c.id}" style="display: block; padding: 10px 12px; text-decoration: none; color: #fd4949; border-top: 1px solid #eee;">Rechazar</a>
+                  <c:if test="${c.aprobacion_pendiente}">
+                    <a href="${pageContext.request.contextPath}/do-aprobar-categoria?categoriaId=${c.id}" style="display: block; padding: 10px 12px; text-decoration: none; color: #111;">Aprobar</a>
+                  </c:if>
+                  <a href="${pageContext.request.contextPath}/editar-categoria?categoriaId=${c.id}&nombreCategoria=${c.nombre}" style="display: block; padding: 10px 12px; text-decoration: none; color: #111;">Editar</a>
+                  <c:if test="${c.aprobacion_pendiente}">
+                    <a href="${pageContext.request.contextPath}/do-rechazar-categoria?categoriaId=${c.id}" style="display: block; padding: 10px 12px; text-decoration: none; color: #fd4949; border-top: 1px solid #eee;">Rechazar</a>
+                  </c:if>
                 </div>
               </div>
             </div>

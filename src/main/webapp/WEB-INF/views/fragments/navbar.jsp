@@ -1,7 +1,7 @@
 <%@ page isELIgnored="false" %> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<nav class="navbar">
+<nav class="navbar" style="position: sticky; top: 0; z-index: 1000;">
   <a href="/farmalibre">
     <img src="${pageContext.request.contextPath}/assets/images/Logo.png" class="logo" />
   </a>
@@ -9,7 +9,7 @@
   <div class="contenedor_categorias">
     <h1>Categorías</h1>
 
-    <c:forEach items="${categorias}" var="c">
+    <c:forEach items="${categoriasAprobadas}" var="c">
       <c:set var="activeId" value="${param.categoriaId}" />
       <a
         href="${pageContext.request.contextPath}/?categoriaId=${c.id}"
@@ -47,12 +47,12 @@
       </c:if>
     
       <c:if test="${usuario.esAdmin}">
-        <a href="${pageContext.request.contextPath}/aprobar-categorias" class="contenedor_acciones_rapidas">
+        <a href="${pageContext.request.contextPath}/administrar-categorias" class="contenedor_acciones_rapidas">
           <div class="contenedor_acciones_rapidas_icono">
             <img src="${pageContext.request.contextPath}/assets/images/acciones.png" class="accion_rapida_icono" />
           </div>
 
-          <p>Aprobar Categorías</p>
+          <p>Administrar Categorías</p>
 
           <div class="aprobar_categorias_pendientes_bubble">${cantidadCategoriasPendientes}</div>
         </a>

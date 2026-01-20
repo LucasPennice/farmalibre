@@ -12,7 +12,7 @@
         href="${pageContext.request.contextPath}/assets/styles/global.css"
       />
     </head>
-    <body style="display: flex; margin: 0">
+    <body style="display: flex; flex-direction: row; margin: 0; height: 100vh;">
       <jsp:include page="/WEB-INF/views/fragments/navbar.jsp" />
 
       <c:if test="${not empty errores}">
@@ -30,7 +30,7 @@
         }, 4000);
       </script>
 
-      <div class="content">
+      <div class="content" style="flex: 1; overflow-y: auto;">
         <jsp:include page="${content}" />
       </div>
     </body>

@@ -45,6 +45,7 @@ import db.DatabaseInitializer;
 public class FrontController extends HttpServlet {
     LinkedList<String> errores = new LinkedList<String>();
     LinkedList<CategoriaDroga> categorias = new LinkedList<CategoriaDroga>();
+    LinkedList<CategoriaDroga> categoriasAprobadas = new LinkedList<CategoriaDroga>();
     LinkedList<Droga> drogas = new LinkedList<Droga>();
     LinkedList<Proveedor> proveedores = new LinkedList<Proveedor>();
     LinkedList<StockDroga> stockDrogas = new LinkedList<StockDroga>();
@@ -257,6 +258,25 @@ public class FrontController extends HttpServlet {
             }
         }
 
+        if (path.startsWith("/do-editar-categoria")) {
+            try {
+                String categoriaId = request.getParameter("categoriaId");
+                String nuevoNombre = request.getParameter("nombreCategoria");
+                
+                AprobarCategoriasController.EditarCategoria(categoriaId, nuevoNombre);
+
+                fetchNewState();
+                updateState(request);
+
+                handleAprobarCategorias(request, response);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+
         onboardingFilter(request, response);
 
         if (path.equals("/") || path.equals("/index")) {
@@ -281,9 +301,11 @@ public class FrontController extends HttpServlet {
             handleActualizarItem(request, response);
         } else if (path.startsWith("/add-item-a-inventario")) {
             handleAddItemAInventario(request, response);
+        } else if (path.startsWith("/editar-categoria")) {
+            handleEditarCategoria(request, response);
         } else if (path.startsWith("/cargar-nuevo-tipo-droga")) {
             handleCargarNuevoTipoDroga(request, response);
-        } else if (path.startsWith("/aprobar-categorias")) {
+        } else if (path.startsWith("/administrar-categorias")) {
             handleAprobarCategorias(request, response);
         } else {
             handleError(request, response);
@@ -383,12 +405,8 @@ public class FrontController extends HttpServlet {
 
     private void handleAprobarCategorias(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        LinkedList<CategoriaDroga> categoriasPendientes = AprobarCategoriasController.GetItems();
-        request.setAttribute("categoriasPendientes", categoriasPendientes);        
-
         request.setAttribute("pageTitle", "Aprobar Categorías");
-        request.setAttribute("content", "/WEB-INF/views/pages/aprobar-categorias.jsp");
+        request.setAttribute("content", "/WEB-INF/views/pages/administrar-categorias.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
@@ -436,6 +454,21 @@ public class FrontController extends HttpServlet {
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
+
+    
+    private void handleEditarCategoria(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String categoriaId = request.getParameter("categoriaId");
+        String nombreCategoria = request.getParameter("nombreCategoria");
+        request.setAttribute("categoriaId", categoriaId);
+        request.setAttribute("nombreCategoria", nombreCategoria);
+        
+        request.setAttribute("pageTitle", "Editar Categoria");
+        request.setAttribute("content", "/WEB-INF/views/pages/editar-categoria.jsp");
+        request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+    }
+
+    
 
     private void onboardingFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -733,12 +766,18 @@ public class FrontController extends HttpServlet {
         stockDrogas.clear();
         stockDrogas.clear();
         categorias.clear();
+        categoriasAprobadas.clear();
 
         try {
             CategoriaDrogaService categoriaDrogaService;
             categoriaDrogaService = new CategoriaDrogaService();
             categorias.addAll(categoriaDrogaService.findAll());
-
+        } catch (Exception e) {
+            errores.add(e.getMessage());
+        }
+        
+        try {
+            categoriasAprobadas.addAll(AprobarCategoriasController.GetCategoriasAprobadas());
         } catch (Exception e) {
             errores.add(e.getMessage());
         }
@@ -783,6 +822,7 @@ public class FrontController extends HttpServlet {
         request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("errores", errores);
+        request.setAttribute("categoriasAprobadas", categoriasAprobadas);
 
         Integer cantidadCategoriasPendientes = 0;
 

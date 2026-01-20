@@ -10,7 +10,7 @@ import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 
 public class AprobarCategoriasController {
-    public static LinkedList<CategoriaDroga> GetItems () {
+    public static LinkedList<CategoriaDroga> GetCategoriasAprobadas () {
         LinkedList<CategoriaDroga> result = new LinkedList<>();
 
         CategoriaDrogaService categoriaDrogaService = new CategoriaDrogaService();
@@ -18,7 +18,7 @@ public class AprobarCategoriasController {
         LinkedList<CategoriaDroga> temp =  categoriaDrogaService.findAll();
 
         for (CategoriaDroga c : temp) {
-            if (c.getAprobacion_pendiente()) {
+            if (!c.getAprobacion_pendiente()) {
                 result.add(c);
             }
         }
@@ -31,6 +31,16 @@ public class AprobarCategoriasController {
         CategoriaDroga categoria = categoriaDrogaService.findById(categoriaId);
 
         categoria.setAprobacion_pendiente(false);
+
+        categoriaDrogaService.update(categoria);
+    }
+   
+    public static void EditarCategoria(String categoriaId, String nuevoNombre){
+        CategoriaDrogaService categoriaDrogaService = new CategoriaDrogaService();
+
+        CategoriaDroga categoria = categoriaDrogaService.findById(categoriaId);
+
+        categoria.setNombre(nuevoNombre);
 
         categoriaDrogaService.update(categoria);
     }
