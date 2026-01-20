@@ -38,4 +38,9 @@ public class BuscarDrogasController {
 
         return resultado;
     }
+
+    public static DrogaDTO buscarDroga(Droga droga) {
+        DrogaDTO drogaDto = new DrogaDTO(droga);
+        return drogaDto;
+    }
 }

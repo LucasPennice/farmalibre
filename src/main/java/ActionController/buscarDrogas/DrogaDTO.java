@@ -7,6 +7,10 @@ import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 
 import java.util.List;
+
+import CategoriaDroga.CategoriaDroga;
+import CategoriaDroga.CategoriaDrogaService;
+
 import java.util.LinkedList;
 
 public class DrogaDTO {
@@ -22,10 +26,12 @@ public class DrogaDTO {
     public DrogaDTO(Droga droga) {
         StockDrogaService stockDrogaService = new StockDrogaService();
         ProveedorService proveedorService = new ProveedorService();
+        CategoriaDrogaService categoriaDrogaService = new CategoriaDrogaService();
         LinkedList<StockDroga> stocksDroga;
 
         try {
             stocksDroga = stockDrogaService.findByDroga(droga);
+            CategoriaDroga categoria = categoriaDrogaService.findById(droga.getCategoriaDroga().getId().toString());
 
             if (stocksDroga == null)
                 throw new RuntimeException("No se encontró el stock");
@@ -33,7 +39,7 @@ public class DrogaDTO {
             this.proveedores = new LinkedList<>();
             this.nombre = droga.getNombre();
             this.formula = droga.getComposicion();
-            this.categoria = droga.getCategoriaDroga().getNombre();
+            this.categoria = categoria.getNombre();
             this.stockTotal = calcularStockTotalDisponible(stocksDroga);
             this.cantidadProveedores = stocksDroga.size();
             this.unidad = droga.getUnidad();
