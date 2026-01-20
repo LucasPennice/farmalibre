@@ -44,6 +44,7 @@
       </button>
     </div>
 
+    
     <h2>Información Comprador</h2>
               <label class="field">
                 <span class="field__label">Nombre Del Responsable*</span>
@@ -75,9 +76,11 @@
                 </div>
               </label>
 
-    <h2>Información Proveedor</h2>
+    <c:if test="${perfilData.esProveedor}">
+    
+            <h2>Información Proveedor</h2>
 
-    <label class="field">
+            <label class="field">
                 <span class="field__label">Razón Social*</span>
                 <input class="field__input" type="text" name="razonSocial" value="${perfilData.razonSocial}" autocomplete="name" required/>
               </label>
@@ -105,6 +108,7 @@
                   </label>
                 </div>
               </div>
+        </c:if>
     </form>
   
   </div>
