@@ -44,8 +44,18 @@
       <div class="droga-shipping-cost">Costo Envío: <span id="costoEnvio">—</span></div>
 
       <div class="droga-actions">
-        <a href="${pageContext.request.contextPath}/carrito" class="droga-btn droga-btn-primary">Comprar ahora</a>
-        <a href="${pageContext.request.contextPath}/carrito" class="droga-btn droga-btn-secondary">Agregar al carrito</a>
+          <form action="${pageContext.request.contextPath}/do-agregar-carrito" method="POST" style="display:flex; flex-flow: column; gap:10px; width:100%;">
+              <input type="hidden" name="drogaId" value="${droga.idDroga}">
+              <input type="hidden" name="cantidad" id="cantidadHidden" value="1">
+              <input type="hidden" id="distribucionJSON" name="distribucion" value="">
+              
+              <button type="submit" name="accion" value="comprar" class="droga-btn droga-btn-primary">
+                  Comprar ahora
+              </button>
+              <button type="submit" name="accion" value="agregar" class="droga-btn droga-btn-secondary">
+                  Agregar al carrito
+              </button>
+          </form>
       </div>
     </div>
   </div>
@@ -223,6 +233,24 @@
       // Inicializar
       autocompletarDistribucion(Number(cantidadInput.value || 0));
       validarDistribucion();
+
+      // Manejar submit del formulario
+      document.querySelectorAll('form button[type="submit"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Actualizar campos ocultos con valores actuales
+            document.getElementById('cantidadHidden').value = cantidadInput.value;
+            
+            // Crear objeto con distribucion
+            var distribucion = {};
+            distribInputs.forEach(function(input, idx) {
+                var valor = Number(input.value || 0);
+                if (valor > 0) {
+                    distribucion[idx] = valor;
+                }
+            });
+            document.getElementById('distribucionJSON').value = JSON.stringify(distribucion);
+        });
+      });
     })();
   </script>
 </div>
