@@ -511,7 +511,28 @@ public class FrontController extends HttpServlet {
     private void handleCarrito(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException { 
 
-        String referer = request.getHeader("Referer"); 
+        // Obtener la sesión
+        HttpSession session = request.getSession(true);
+        
+        // Intentar recuperar el forward de la sesión
+        String forward = (String) session.getAttribute("carritoForward");
+        
+        // Si no hay forward en sesión, usar el Referer del request actual
+        // Esto sucede cuando entras al carrito por primera vez
+        if (forward == null || forward.isEmpty()) {
+            String referer = request.getHeader("Referer");
+            
+            // Validar que el referer sea válido y no sea un endpoint de acción
+            if (referer != null && !referer.contains("/do-") && !referer.contains("/auth/")) {
+                forward = referer;
+                session.setAttribute("carritoForward", forward);
+            }
+        }
+        
+        // Si aún no hay forward válido, usar el homepage
+        if (forward == null || forward.isEmpty()) {
+            forward = request.getContextPath() + "/";
+        }
 
         // Obtener el carrito de la sesión
         CarritoService carritoService = new CarritoService();
@@ -520,7 +541,6 @@ public class FrontController extends HttpServlet {
         request.setAttribute("carrito", carrito);
         request.setAttribute("pageTitle", "Carrito");
         request.setAttribute("content", "/WEB-INF/views/pages/carrito.jsp");
-        request.setAttribute("forward", referer);
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
     
@@ -557,6 +577,12 @@ public class FrontController extends HttpServlet {
         String drogaId = request.getParameter("drogaId");
         DrogaService drogaService = new DrogaService();
         Droga droga = drogaService.findById(drogaId);
+
+        if (drogaId == null || drogaId.trim().isEmpty()) {
+            handleHomepage(request, response);
+            return;
+        }
+
         DrogaDTO drogaAComprar = BuscarDrogasController.buscarDroga(droga);
 
         Integer cantidadStockDroga = 0;
