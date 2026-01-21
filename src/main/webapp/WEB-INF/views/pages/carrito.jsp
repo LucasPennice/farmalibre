@@ -5,10 +5,21 @@
 
 <div class="carrito-container">
   <!-- Volver -->
-  <a href="${forward}" class="droga-back-link">
-    <span class="droga-back-icon">⟵</span>
-    Volver
-  </a>
+  <%-- Volver --%>
+  <c:choose>
+    <c:when test="${not empty forward and not fn:contains(forward, '/do-') and not fn:contains(forward, '/auth/')}">
+      <a href="${forward}" class="droga-back-link">
+        <span class="droga-back-icon">⟵</span>
+        Volver
+      </a>
+    </c:when>
+    <c:otherwise>
+      <a href="${pageContext.request.contextPath}/" class="droga-back-link">
+        <span class="droga-back-icon">⟵</span>
+        Volver al Inicio
+      </a>
+    </c:otherwise>
+  </c:choose>
 
   <div class="carrito-content">
     <!-- Área de items del carrito -->
