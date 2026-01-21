@@ -1,25 +1,24 @@
 package Carrito;
 
-import java.util.List;
+import java.util.LinkedList;
 
-import Droga.Droga;
 
 public class Carrito {
     private Integer costoDrogas = 0;
     private Integer costoEnvio = 0;
     private Integer total = 0;
 
-    private List<Droga> listDroga;
+    private LinkedList<ItemCarrito> items;
 
     // Constructors
     public Carrito() {
     };
 
-    public Carrito(Integer id, Integer costoDrogas, Integer costoEnvio, Integer total, List<Droga> listDroga) {
+    public Carrito(Integer id, Integer costoDrogas, Integer costoEnvio, Integer total, LinkedList<ItemCarrito> items) {
         this.costoDrogas = costoDrogas;
         this.costoEnvio = costoEnvio;
         this.total = total;
-        this.listDroga = listDroga;
+        this.items = items;
     }
 
     // Getters and Setters
@@ -48,12 +47,16 @@ public class Carrito {
         this.total = total;
     }
 
-    public List<Droga> getListDroga() {
-        return listDroga;
+    public LinkedList<ItemCarrito> getItems() {
+        return items;
     }
 
-    public void setListDroga(List<Droga> listDroga) {
-        this.listDroga = listDroga;
+    public void setItems(LinkedList<ItemCarrito> items) {
+        this.items = items;
+    }
+
+    public void setItem(ItemCarrito item) {
+        this.items.add(item);   
     }
 
 }

@@ -18,6 +18,9 @@ import ActionController.administrarTiposDrogaYCategorias.AdministrarTiposDrogaYC
 import ActionController.buscarDrogas.BuscarDrogasController;
 import ActionController.buscarDrogas.DrogaDTO;
 import AprobarCategorias.AprobarCategoriasController;
+import Carrito.Carrito;
+import Carrito.CarritoService;
+import Carrito.ItemCarrito;
 import CategoriaDroga.CategoriaDroga;
 import CategoriaDroga.CategoriaDrogaService;
 import Droga.Droga;
@@ -136,6 +139,7 @@ public class FrontController extends HttpServlet {
             doCompleteOnboardingUsuario(request, response);
             return;
         }
+
         
         if (path.startsWith("/do-actualizar-inventario")) {
             try {
@@ -312,6 +316,102 @@ public class FrontController extends HttpServlet {
             }
         }
 
+        if (path.startsWith("/do-agregar-carrito")) {
+            try {
+                // Inicializo servicios
+                CarritoService carritoService = new CarritoService();
+                DrogaService drogaService = new DrogaService();
+
+                
+                String drogaId = request.getParameter("drogaId");
+                String distribucionJSON = request.getParameter("distribucion");
+                String action = request.getParameter("accion");
+
+                // Busco droga
+                Droga droga = drogaService.findById(drogaId);
+
+                // Parseo distribucion: {"0":20,"1":30} -> 0:20,1:30
+                String jsonLimpio = distribucionJSON.replace("{", "").replace("}", "").replace("\"", "");
+                String[] pares = jsonLimpio.split(",");
+
+                // pares = ["0:20", "1:30"]
+                // Lo primero es la pos del proveedor y lo segundo la cantidad de droga elegida por proveedor
+
+                // Filtro el stock de droga 
+
+                LinkedList<StockDroga> stocksDeEstaDroga = new LinkedList<>();
+                for (StockDroga stock : stockDrogas) {
+                    if (stock.getDroga().getId().equals(Integer.parseInt(drogaId))) {
+                        stocksDeEstaDroga.add(stock);
+                    }
+                }
+
+                for (String par : pares) {
+                    if (par.trim().isEmpty()) continue;
+                    
+                    String[] keyValue = par.split(":");
+                    int indiceProveedor = Integer.parseInt(keyValue[0].trim());
+                    int cantidadProveedor = Integer.parseInt(keyValue[1].trim());
+                    
+                    // Obtener el stock del proveedor usando el índice
+                    StockDroga stockProveedor = stocksDeEstaDroga.get(indiceProveedor);
+                    
+                    // Crear ItemCarrito
+                    ItemCarrito item = new ItemCarrito();
+                    item.setDroga(droga);
+                    item.setCantidad(cantidadProveedor);
+                    item.setProveedor(stockProveedor.getProveedor());
+                    item.setPrecioUnitario(stockProveedor.getPrecioUnitario());
+                    
+                    // Agregar al carrito
+                    int precioTotal = (int)(stockProveedor.getPrecioUnitario() * cantidadProveedor);
+                    carritoService.addItemDroga(request.getSession(), item, precioTotal);
+                }
+
+                
+                
+                if ("comprar".equals(action)) {
+                    handleCarrito(request, response);
+                } else {
+                    handleDroga(request, response);
+                }
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+
+        if (path.startsWith("/do-eliminar-item-droga")) {
+            try {
+                CarritoService carritoService = new CarritoService();
+                Carrito carrito = carritoService.getCart(request.getSession());
+                LinkedList<ItemCarrito> items = carrito.getItems();
+                LinkedList<ItemCarrito> itemsAEliminar = new LinkedList<>();
+                String drogaId = request.getParameter("drogaId");
+
+                for(ItemCarrito item : items) {
+                    if(item.getDroga().getId().equals(Integer.parseInt(drogaId))){
+                        itemsAEliminar.add(item);
+                    }
+                }   
+
+                for(ItemCarrito item: itemsAEliminar){
+                    int precioTotal = item.getCantidad() * item.getPrecioUnitario().intValue();
+                    carritoService.removeItem(request.getSession(), item, precioTotal);
+                }
+
+                handleCarrito(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleCarrito(request, response);
+                return;
+            }
+        }
+
         onboardingFilter(request, response);
 
         if (path.equals("/") || path.equals("/index")) {
@@ -350,9 +450,18 @@ public class FrontController extends HttpServlet {
 
 
     private void handleCarrito(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException { 
+
+        String referer = request.getHeader("Referer"); 
+
+        // Obtener el carrito de la sesión
+        CarritoService carritoService = new CarritoService();
+        Carrito carrito = carritoService.getCart(request.getSession());
+        
+        request.setAttribute("carrito", carrito);
         request.setAttribute("pageTitle", "Carrito");
         request.setAttribute("content", "/WEB-INF/views/pages/carrito.jsp");
+        request.setAttribute("forward", referer);
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
     
@@ -480,7 +589,12 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
 
         String searchQuery = request.getParameter("filter");
-        String categoriaId = request.getParameter("categoriaId");
+        String categoriaId = request.getParameter("categoriaId"); 
+
+        // Obtener el carrito de la sesión
+        CarritoService carritoService = new CarritoService();
+        Carrito carrito = carritoService.getCart(request.getSession());
+        int itemsEnElCarrito = carrito.getItems().size();
 
         LinkedList<DrogaDTO> drogaDTOs;
 
@@ -509,7 +623,7 @@ public class FrontController extends HttpServlet {
         }
 
         request.setAttribute("drogaDTOs", drogaDTOs);
-
+        request.setAttribute("itemsEnElCarrito", itemsEnElCarrito);
         request.setAttribute("pageTitle", "Inicio");
         request.setAttribute("content", "/WEB-INF/views/pages/index.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);

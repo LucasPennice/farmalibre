@@ -1,12 +1,9 @@
 package Carrito;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import jakarta.servlet.http.HttpSession;
-
-import Droga.Droga;
 
 /**
  * Servicio de carrito almacenado en la sesión del usuario (sin base de datos).
@@ -21,42 +18,42 @@ public class CarritoService {
         Carrito cart = (Carrito) session.getAttribute(CART_ATTR);
         if (cart == null) {
             cart = new Carrito();
-            cart.setListDroga(new ArrayList<>());
+            cart.setItems(new LinkedList<>());
             session.setAttribute(CART_ATTR, cart);
         }
         return cart;
     }
 
-    /** Agrega una droga al carrito y recalcula totales. */
-    public void addDroga(HttpSession session, Droga droga, int precioUnitario) {
-        if (droga == null) {
-            throw new IllegalArgumentException("La droga no puede ser nula");
+    /** Agrega un Item al carrito y recalcula totales. */
+    public void addItemDroga(HttpSession session, ItemCarrito item, int precioUnitario) {
+        if (item == null) {
+            throw new IllegalArgumentException("El item no puede ser nulo");
         }
         if (precioUnitario < 0) {
             throw new IllegalArgumentException("El precio no puede ser negativo");
         }
 
         Carrito cart = getCart(session);
-        List<Droga> items = cart.getListDroga();
+        LinkedList<ItemCarrito> items = cart.getItems();
         if (items == null) {
-            items = new ArrayList<>();
-            cart.setListDroga(items);
+            items = new LinkedList<>();
+            cart.setItems(items);
         }
-        items.add(droga);
+        items.add(item);
 
         cart.setCostoDrogas(cart.getCostoDrogas() + precioUnitario);
         recalcTotal(cart);
-        log.info("Droga agregada al carrito. Total drogas: " + items.size());
+        log.info("Item agregado al carrito. Total items: " + items.size());
     }
 
-    /** Elimina una droga (primera coincidencia) y recalcula totales. */
-    public void removeDroga(HttpSession session, Droga droga, int precioUnitario) {
-        if (droga == null) {
-            throw new IllegalArgumentException("La droga no puede ser nula");
+    /** Elimina un item del carrito (primera coincidencia) y recalcula totales. */
+    public void removeItem(HttpSession session, ItemCarrito item, int precioUnitario) {
+        if (item == null) {
+            throw new IllegalArgumentException("El item no puede ser nulo");
         }
         Carrito cart = getCart(session);
-        List<Droga> items = cart.getListDroga();
-        if (items != null && items.remove(droga)) {
+        LinkedList<ItemCarrito> items = cart.getItems();
+        if (items != null && items.remove(item)) {
             cart.setCostoDrogas(Math.max(0, cart.getCostoDrogas() - Math.max(0, precioUnitario)));
             recalcTotal(cart);
         }
@@ -65,7 +62,7 @@ public class CarritoService {
     /** Limpia el carrito. */
     public void clear(HttpSession session) {
         Carrito cart = getCart(session);
-        cart.setListDroga(new ArrayList<>());
+        cart.setItems(new LinkedList<>());
         cart.setCostoDrogas(0);
         cart.setCostoEnvio(0);
         cart.setTotal(0);

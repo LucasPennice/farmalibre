@@ -21,7 +21,7 @@
     <c:if test="${not empty usuario}">
       <a href="/farmalibre/carrito" class="cart">
         <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />
-        <p class="badge">5</p>
+        <p class="badge">${itemsEnElCarrito}</p>
       </a>
 
       <a href="/farmalibre/perfil" class="perfil_index_contenedor anchor_remove_styles">

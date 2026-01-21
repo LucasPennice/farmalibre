@@ -25,7 +25,8 @@ public class AuthFilter implements Filter {
                 path.startsWith("/actualizar-item") ||
                 path.startsWith("/do-delete-selected-items") ||
                 path.startsWith("/editar-categoria") ||
-                path.startsWith("/administrar-categorias");
+                path.startsWith("/administrar-categorias") ||
+                path.startsWith("/do-agregar-carrito");
 
         boolean blockIfLogged = path.startsWith("/auth") && !path.startsWith("/auth/do-logout");
 
