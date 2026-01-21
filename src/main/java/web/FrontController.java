@@ -15,6 +15,11 @@ import ActionController.actualizarInventario.ItemInventarioDTO;
 import ActionController.actualizarPerfil.ActualizarPerfilController;
 import ActionController.actualizarPerfil.PerfilInfoDTO;
 import ActionController.administrarTiposDrogaYCategorias.AdministrarTiposDrogaYCategorias;
+import ActionController.auth.AuthController;
+import ActionController.auth.LoginRequestDTO;
+import ActionController.auth.LoginResponseDTO;
+import ActionController.auth.RegisterRequestDTO;
+import ActionController.auth.RegisterResponseDTO;
 import ActionController.buscarDrogas.BuscarDrogasController;
 import ActionController.buscarDrogas.DrogaDTO;
 import AprobarCategorias.AprobarCategoriasController;
@@ -34,17 +39,9 @@ import Usuario.Usuario;
 import Usuario.UsuarioService;
 import db.DatabaseInitializer;
 
-// TODO: Habría que refactorizar el codigo cosa de que funciones como doLogin, doRegister y esas solo se preocupen por la logica que les corresponde y extraerlas a un controlador que tenga sentido
-// Entonces en este archivo quedaria algo como. La funcion (doLogin) no deberia conocer handleHomePage ni nada de ruteo en general
-
-// if(ruta){
-//     try{
-//         Controlador.doLogin()
-//     }catch{
-//         errores.add(etc)
-//         handleLogin
-//     }
-// }
+// NOTA: La refactorización se ha completado. Las funciones de autenticación (doLogin, doRegister, doLogout)
+// han sido extraídas a ActionController.auth.AuthController. Este archivo ahora solo se encarga del ruteo
+// y manejo de respuestas HTTP, siguiendo el patrón MVC.
 
 @MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class FrontController extends HttpServlet {
@@ -111,17 +108,79 @@ public class FrontController extends HttpServlet {
         updateState(request);
 
         if (path.startsWith("/auth/do-register")) {
-            doRegister(request, response);
-            return;
+            try {
+                // Extraer parámetros del request
+                String nombre = request.getParameter("nombre");
+                String email = request.getParameter("email");
+                String password = request.getParameter("password");
+                
+                // Crear DTO y llamar al controlador
+                RegisterRequestDTO registerRequest = new RegisterRequestDTO(nombre, email, password);
+                
+                @SuppressWarnings("unused")
+                RegisterResponseDTO registerResponse = AuthController.doRegister(registerRequest);
+                
+                // Auto-login después del registro
+                LoginRequestDTO loginRequest = new LoginRequestDTO(nombre, password);
+                LoginResponseDTO loginResponse = AuthController.doLogin(loginRequest);
+                
+                HttpSession session = request.getSession(true);
+                session.setAttribute("usuario_id", loginResponse.getUsuario().getId());
+                setUserAttribute(request);
+                
+                // Redirigir al homepage después del registro exitoso
+                handleHomepage(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                request.setAttribute("errores", errores);
+                handleHomepage(request, response);
+                return;
+            }
         }
 
         if (path.startsWith("/auth/do-login")) {
-            doLogin(request, response);
-            return;
+            try {
+                // Extraer parámetros del request
+                String nombre = request.getParameter("nombre");
+                String password = request.getParameter("password");
+                
+                // Crear DTO y llamar al controlador
+                LoginRequestDTO loginRequest = new LoginRequestDTO(nombre, password);
+                LoginResponseDTO loginResponse = AuthController.doLogin(loginRequest);
+                
+                // Manejar sesión
+                HttpSession session = request.getSession(true);
+                session.setAttribute("usuario_id", loginResponse.getUsuario().getId());
+                setUserAttribute(request);
+                
+                // Redirigir al homepage después del login exitoso
+                handleHomepage(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                request.setAttribute("errores", errores);
+                handleLogin(request, response);
+                return;
+            }
         }
 
         if (path.startsWith("/auth/do-logout")) {
-            doLogout(request, response);
+            try {
+                AuthController.doLogout();
+                
+                HttpSession session = request.getSession(false);
+                session.invalidate();
+                setUserAttribute(request);
+                
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                request.setAttribute("errores", errores);
+            } finally {
+                handleHomepage(request, response);
+            }
             return;
         }
 
@@ -699,76 +758,7 @@ public class FrontController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
     }
 
-    private void doLogin(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!request.getMethod().equalsIgnoreCase("POST")) {
-            errores.add("Verbo incorrecto para /auth/do-login");
-            request.setAttribute("errores", errores);
-            // Redirige a homepage
-            handleHomepage(request, response);
-            return;
-        }
-
-        String nombre = request.getParameter("nombre");
-        String password = request.getParameter("password");
-
-        try {
-            Usuario usuarioAutenticado = UsuarioService.autenticar(nombre, password);
-
-            HttpSession session = request.getSession(true);
-            session.setAttribute("usuario_id", usuarioAutenticado.getId());
-            setUserAttribute(request);
-
-            onboardingFilter(request, response);
-            return;
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-            request.setAttribute("errores", errores);
-        } finally {
-            handleHomepage(request, response);
-        }
-
-    }
-
-    private void doRegister(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!request.getMethod().equalsIgnoreCase("POST")) {
-            errores.add("Verbo incorrecto para /auth/register");
-            request.setAttribute("errores", errores);
-            // Redirige a homepage
-            handleHomepage(request, response);
-            return;
-        }
-
-        String nombre = request.getParameter("nombre");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-
-        try {
-            UsuarioService.registrar(nombre, email, password);
-            doLogin(request, response);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-            request.setAttribute("errores", errores);
-            handleHomepage(request, response);
-            return;
-        }
-    }
-
-    private void doLogout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        try {
-            HttpSession session = request.getSession(false);
-            session.invalidate();
-            setUserAttribute(request);
-        } catch (Exception e) {
-            errores.add(e.getMessage());
-            request.setAttribute("errores", errores);
-        } finally {
-            handleHomepage(request, response);
-        }
-    }
+    
 
     private void doCompleteOnboardingUsuario(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
