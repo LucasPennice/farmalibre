@@ -389,6 +389,15 @@ public class FrontController extends HttpServlet {
                 // Busco droga
                 Droga droga = drogaService.findById(drogaId);
 
+                if (carritoService.existeDrogaEnCarrito(request.getSession(), droga.getId())) {
+                    if ("agregar".equals(action)) {
+                        errores.add("Ya agrego esta droga al carrito, si desea modificar la cantidad que pidio, eliminela del carrito y vuelva aqui");
+                    } else if ("comprar".equals(action)) {
+                        handleCarrito(request, response);
+                        return;
+                    }
+                }
+
                 // Parseo distribucion: {"0":20,"1":30} -> 0:20,1:30
                 String jsonLimpio = distribucionJSON.replace("{", "").replace("}", "").replace("\"", "");
                 String[] pares = jsonLimpio.split(",");

@@ -24,6 +24,17 @@ public class CarritoService {
         return cart;
     }
 
+    /** Verifica si ya existe una droga en el carrito por su ID. */
+    public boolean existeDrogaEnCarrito(HttpSession session, Integer drogaId) {
+        Carrito cart = getCart(session);
+        for (ItemCarrito item : cart.getItems()) {
+            if (item.getDroga().getId().equals(drogaId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Agrega un Item al carrito y recalcula totales. */
     public void addItemDroga(HttpSession session, ItemCarrito item, int precioUnitario) {
         if (item == null) {
@@ -39,6 +50,14 @@ public class CarritoService {
             items = new LinkedList<>();
             cart.setItems(items);
         }
+
+        for (ItemCarrito existingItem : items) {
+            if (existingItem.getDroga().getId().equals(item.getDroga().getId())) {
+                log.info("La droga ya existe en el carrito, no se agrega duplicado");
+                return;
+            }
+        }
+
         items.add(item);
 
         cart.setCostoDrogas(cart.getCostoDrogas() + precioUnitario);
