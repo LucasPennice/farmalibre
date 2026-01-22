@@ -97,12 +97,14 @@
             <span>${carrito.costoEnvio}\$</span>
           </div>
           
-          <div class="carrito-resumen-total">
-            <span>Total</span>
-            <span>${carrito.total}\$</span>
-          </div>
-          
-          <button class="carrito-btn-pagar">Proceder al pago</button>
+           <div class="carrito-resumen-total">
+             <span>Total</span>
+             <span>${carrito.total}\$</span>
+           </div>
+           
+           <form action="${pageContext.request.contextPath}/do-checkout" method="POST" class="carrito-form-pago">
+             <button type="submit" class="carrito-btn-pagar">Proceder al pago</button>
+           </form>
         </c:when>
         <c:otherwise>
           <!-- Resumen vacío -->

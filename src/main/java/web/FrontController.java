@@ -16,6 +16,11 @@ import ActionController.actualizarPerfil.ActualizarPerfilController;
 import ActionController.actualizarPerfil.PerfilInfoDTO;
 import ActionController.administrarTiposDrogaYCategorias.AdministrarTiposDrogaYCategorias;
 import ActionController.auth.AuthController;
+import ActionController.checkout.CheckoutController;
+import ActionController.checkout.CheckoutItemDTO;
+import ActionController.checkout.CheckoutRequestDTO;
+import ActionController.checkout.CheckoutResponseDTO;
+import ActionController.checkout.StockReductionService;
 import ActionController.auth.LoginRequestDTO;
 import ActionController.auth.LoginResponseDTO;
 import ActionController.auth.RegisterRequestDTO;
@@ -476,6 +481,142 @@ public class FrontController extends HttpServlet {
             } catch (Exception e) {
                 errores.add(e.getMessage());
                 handleCarrito(request, response);
+                return;
+            }
+        }
+
+        if (path.startsWith("/do-checkout")) {
+            try {
+                // Obtener datos del carrito y usuario
+                String usuarioId = getUserIdFromSession(request);
+                if (usuarioId == null) {
+                    errores.add("Debes estar logueado para proceder al pago");
+                    handleLogin(request, response);
+                    return;
+                }
+                
+                // Obtener carrito de sesión
+                CarritoService carritoService = new CarritoService();
+                Carrito carrito = carritoService.getCart(request.getSession());
+                
+                if (carrito == null || carrito.getItems() == null || carrito.getItems().isEmpty()) {
+                    errores.add("El carrito está vacío");
+                    handleCarrito(request, response);
+                    return;
+                }
+                
+                // Construir los items para el checkout
+                LinkedList<CheckoutItemDTO> checkoutItems = new LinkedList<>();
+                for (ItemCarrito item : carrito.getItems()) {
+                    CheckoutItemDTO checkoutItem = new CheckoutItemDTO(
+                        item.getDroga().getId().toString(),
+                        item.getDroga().getNombre(),
+                        item.getCantidad(),
+                        item.getPrecioUnitario().doubleValue()
+                    );
+                    checkoutItems.add(checkoutItem);
+                }
+                
+                // Crear request de checkout
+                CheckoutRequestDTO checkoutRequest = new CheckoutRequestDTO(
+                    usuarioId,
+                    carrito.getTotal().doubleValue(),
+                    "Compra de medicamentos Farmalibre",
+                    checkoutItems
+                );
+                
+                // Llamar al controlador de checkout
+                CheckoutResponseDTO checkoutResponse = CheckoutController.crearPreferenciaPago(checkoutRequest);
+                
+                // Guardar preferenceId en sesión para uso posterior
+                request.getSession().setAttribute("checkoutPreferenceId", checkoutResponse.getPreferenceId());
+                
+                // Redirigir a Mercado Pago (preferir sandbox si está disponible en desarrollo)
+                String redirectUrl = checkoutResponse.getSandboxInitPoint() != null 
+                    ? checkoutResponse.getSandboxInitPoint() 
+                    : checkoutResponse.getInitPoint();
+                
+                response.sendRedirect(redirectUrl);
+                return;
+                
+            } catch (Exception e) {
+                errores.add("Error al crear preferencia de pago: " + e.getMessage());
+                request.setAttribute("errores", errores);
+                handleCarrito(request, response);
+                return;
+            }
+        }
+        
+        if (path.startsWith("/checkout/success")) {
+            try {
+                String preferenceId = (String) request.getSession().getAttribute("checkoutPreferenceId");
+                String paymentId = request.getParameter("payment_id");
+                
+                // Obtener carrito antes de limpiarlo
+                CarritoService carritoService = new CarritoService();
+                Carrito carrito = carritoService.getCart(request.getSession());
+                
+                // Procesar el pago exitoso
+                CheckoutController.procesarRetornoExitoso(preferenceId, paymentId);
+                
+                // Reducir stock de los productos
+                if (carrito != null && carrito.getItems() != null && !carrito.getItems().isEmpty()) {
+                    try {
+                        StockReductionService.reducirStock(carrito.getItems());
+                        log.info("Stock reducido exitosamente");
+                    } catch (Exception e) {
+                        log.warning("Error al reducir stock, pero el pago fue exitoso: " + e.getMessage());
+                        errores.add("Pago completado pero hubo un error al actualizar el inventario");
+                    }
+                }
+                
+                // Limpiar el carrito
+                carritoService.clear(request.getSession());
+                
+                request.setAttribute("pageTitle", "Pago Exitoso");
+                request.setAttribute("content", "/WEB-INF/views/pages/checkout-success.jsp");
+                request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add("Error al procesar pago: " + e.getMessage());
+                request.setAttribute("errores", errores);
+                handleHomepage(request, response);
+                return;
+            }
+        }
+        
+        if (path.startsWith("/checkout/failure")) {
+            try {
+                String preferenceId = (String) request.getSession().getAttribute("checkoutPreferenceId");
+                
+                // Procesar el pago fallido
+                CheckoutController.procesarRetornoFallido(preferenceId);
+                
+                errores.add("El pago fue cancelado. Por favor, intenta de nuevo.");
+                request.setAttribute("errores", errores);
+                handleCarrito(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add("Error al procesar fallo de pago: " + e.getMessage());
+                request.setAttribute("errores", errores);
+                handleCarrito(request, response);
+                return;
+            }
+        }
+        
+        if (path.startsWith("/checkout/pending")) {
+            try {
+                request.setAttribute("pageTitle", "Pago Pendiente");
+                request.setAttribute("content", "/WEB-INF/views/pages/checkout-pending.jsp");
+                request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
+                return;
+                
+            } catch (Exception e) {
+                errores.add("Error: " + e.getMessage());
+                request.setAttribute("errores", errores);
+                handleHomepage(request, response);
                 return;
             }
         }

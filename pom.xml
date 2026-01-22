@@ -66,6 +66,13 @@
         <version>5.5.0</version>
         <scope>test</scope>
     </dependency>
+
+    <!-- Mercado pago SDK -->
+    <dependency>
+      <groupId>com.mercadopago</groupId>
+      <artifactId>sdk-java</artifactId>
+      <version>2.1.7</version>
+    </dependency>
   </dependencies>
 
   <build>
