@@ -19,7 +19,7 @@ El flujo principal permite a los proveedores registrar su stock con precios unit
 
 3. ## **Modelo de dominio**
 
-![Modelo de dominio](docs/modelo-de-dominio.png)
+![Modelo de dominio](modelo-de-dominio.png)
 
 4. ## **Casos de uso para Regularidad**
 
@@ -48,7 +48,7 @@ Todos los CRUDs de regularidad más los siguientes requerimientos adicionales:
 
 6. ## **User flow**
 
-![User flow](docs/User-flow.png)
+![User flow](User-flow.png)
 
 
 7. ## **Stack Tecnológico**
