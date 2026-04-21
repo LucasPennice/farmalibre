@@ -9,7 +9,7 @@
         <input
           type="text"
           name="filter"
-          placeholder="Buscar droga por nombre, composición, o categoría"
+          placeholder="Buscar droga por nombre o composición"
         />
         <input
           type="hidden"

@@ -826,6 +826,9 @@ public class FrontController extends HttpServlet {
         String searchQuery = request.getParameter("filter");
         String categoriaId = request.getParameter("categoriaId"); 
 
+        boolean hasSearch = searchQuery != null && !searchQuery.isBlank();
+        boolean hasCategoria = categoriaId != null && !categoriaId.isBlank();
+
         // Obtener el carrito de la sesión
         CarritoService carritoService = new CarritoService();
         Carrito carrito = carritoService.getCart(request.getSession());
@@ -833,28 +836,28 @@ public class FrontController extends HttpServlet {
 
         LinkedList<DrogaDTO> drogaDTOs;
 
-        if (searchQuery != null && categoriaId != null) {
+        if (hasSearch && hasCategoria) {
             doFilter(request, response);
             return;
         }
 
         // Filtrar solo por categoría
-        if (categoriaId != null && !categoriaId.isEmpty()) {
+        if (hasCategoria) {
             LinkedList<Droga> drogasFiltradas = new LinkedList<>();
             for (Droga droga : drogas) {
                 if (droga.getCategoriaDroga().getId().toString().equals(categoriaId)) {
                     drogasFiltradas.add(droga);
                 }
             }
-            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogasFiltradas, null);
+            drogaDTOs = BuscarDrogasController.buscarDrogas(drogasFiltradas, null);
         }
         // Filtrar solo por búsqueda
-        else if (searchQuery != null && !searchQuery.isEmpty()) {
-            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, searchQuery);
+        else if (hasSearch) {
+            drogaDTOs = BuscarDrogasController.buscarDrogas(drogas, searchQuery);
         }
         // Sin filtros
         else {
-            drogaDTOs = BuscarDrogasController.BuscarDrogas(drogas, null);
+            drogaDTOs = BuscarDrogasController.buscarDrogas(drogas, null);
         }
 
         request.setAttribute("drogaDTOs", drogaDTOs);
@@ -912,7 +915,7 @@ public class FrontController extends HttpServlet {
         // Filtrar por búsqueda Y categoría
         if (categoriaId != null && !categoriaId.isEmpty() && searchQuery != null && !searchQuery.isEmpty()) {
             // Primero buscar por texto
-            LinkedList<DrogaDTO> drogaDTOsTemporales = BuscarDrogasController.BuscarDrogas(drogas, searchQuery);
+            LinkedList<DrogaDTO> drogaDTOsTemporales = BuscarDrogasController.buscarDrogas(drogas, searchQuery);
 
             // Luego filtrar por categoría
             drogaDTOs = new LinkedList<>();

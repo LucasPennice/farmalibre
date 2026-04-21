@@ -9,7 +9,7 @@ import Droga.Droga;
 public class BuscarDrogasController {
     LinkedList<DrogaDTO> drogasDTO;
 
-    public static LinkedList<DrogaDTO> BuscarDrogas(LinkedList<Droga> drogas, String searchQuery) {
+    public static LinkedList<DrogaDTO> buscarDrogas(LinkedList<Droga> drogas, String searchQuery) {
         LinkedList<DrogaDTO> resultado = new LinkedList<>();
 
         if (searchQuery == null || searchQuery.isEmpty()) {
