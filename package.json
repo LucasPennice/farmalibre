@@ -1,6 +1,6 @@
 {
   "name": "farmalibre-dev",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
     "initdb": "./scripts/init-db.sh",
     "setup": "./scripts/dev-tomcat.sh",
@@ -22,6 +22,6 @@
   "devDependencies": {
     "chokidar": "^3.5.3",
     "dotenv-cli": "^7.4.2",
-    "prettier-plugin-java": "^2.8.1"
+    "prettier-plugin-java": "^0.3.2"
   }
 }
