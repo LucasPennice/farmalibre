@@ -64,7 +64,7 @@
               <label class="field">
                 <span class="field__label">Foto de perfil*</span>
                 <div class="field__input field_input_photo_container" style="height: 200px;">
-                  <input class="field__input_photo" type="file" name="fotoPerfil" accept="image/*" />
+                  <input class="field__input_photo" type="file" name="fotoPerfil" accept="image/png,image/jpeg" />
                   <input type="hidden" name="mantenerFotoActual" value="true" />
                   <div class="image-preview-grid">
                     <div class="update_img_label">
