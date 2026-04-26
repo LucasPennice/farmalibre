@@ -15,6 +15,7 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
 
 import Utils.MercadoPagoUtil;
+import Utils.MockCheckoutUtil;
 
 /**
  * Controlador para manejar el checkout y preferencias de pago con Mercado Pago
@@ -29,7 +30,7 @@ public class CheckoutController {
     
     static {
         try {
-            // Inicializar el SDK de Mercado Pago con el access token
+            // Inicializar el SDK de Mercado Pago co<n el access token
             String accessToken = MercadoPagoUtil.getAccessToken();
             MercadoPagoConfig.setAccessToken(accessToken);
             log.info("✓ Mercado Pago SDK inicializado correctamente");
@@ -47,6 +48,11 @@ public class CheckoutController {
      */
     @SuppressWarnings("unused")
     public static CheckoutResponseDTO crearPreferenciaPago(CheckoutRequestDTO request) {
+        // Si el request indica modo mock, devolver preferencia falsa
+        if (request.isMockMode()) {
+            return createMockPreference(request);
+        }
+        
         try {
             log.info("Iniciando creación de preferencia de pago para usuario: " + request.getUsuarioId());
             
@@ -121,6 +127,31 @@ public class CheckoutController {
             log.severe("Error inesperado al crear preferencia: " + e.getMessage());
             throw new RuntimeException("Error inesperado: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Crea una preferencia falsa para modo mock
+     * @param request DTO con los datos del checkout
+     * @return DTO con preferenceId falso e initPoint que apunta a /checkout/success
+     */
+    private static CheckoutResponseDTO createMockPreference(CheckoutRequestDTO request) {
+        log.info("MOCK: Creando preferencia falsa para usuario: " + request.getUsuarioId());
+        
+        String mockPreferenceId = MockCheckoutUtil.generateMockPreferenceId();
+        
+        // URL de éxito falsa que Simulará el flow completo
+        String mockSuccessUrl = BACK_URL + "/checkout/success?mock=true&preference_id=" + mockPreferenceId;
+        
+        CheckoutResponseDTO response = new CheckoutResponseDTO(
+            mockPreferenceId,
+            mockSuccessUrl,
+            mockSuccessUrl // sandboxInitPoint = initPoint en modo mock
+        );
+        
+        log.info("MOCK: Preferencia creada - ID: " + mockPreferenceId);
+        log.info("MOCK: URL de redirect: " + mockSuccessUrl);
+        
+        return response;
     }
     
     /**

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="Utils.MockCheckoutUtil" %>
 
 <div class="carrito-container">
   <!-- Volver -->
@@ -61,7 +62,7 @@
                       <div class="carrito-item-row">
                         <span class="carrito-item-proveedor">${itemDroga.proveedor.nombreFantasia}</span>
                         <span class="carrito-item-cantidad">${itemDroga.cantidad}grs (${itemDroga.precioUnitario}\$)</span>
-                        <span class="carrito-item-envio">Envío ${itemDroga.cantidad * 50}\$</span>
+                        <span class="carrito-item-envio">Envío incluido</span>
                         <span class="carrito-item-precio">${subtotalItem}\$</span>
                       </div>
                     </c:if>
@@ -82,28 +83,34 @@
     </div>
 
     <!-- Resumen de compra (siempre visible) -->
-    <div class="carrito-resumen">
+<div class="carrito-resumen">
       <h3 class="carrito-resumen-titulo">Resumen de Compra</h3>
       
       <c:choose>
         <c:when test="${not empty carrito and not empty carrito.items}">
           <div class="carrito-resumen-linea">
             <span>Costo Drogas</span>
-            <span>${carrito.costoDrogas}\$</span>
+            <span>${carrito.costoDrogas}$</span>
           </div>
           
           <div class="carrito-resumen-linea">
             <span>Costo Envío</span>
-            <span>${carrito.costoEnvio}\$</span>
+            <span>${carrito.costoEnvio}$</span>
           </div>
           
            <div class="carrito-resumen-total">
              <span>Total</span>
-             <span>${carrito.total}\$</span>
+             <span>${carrito.total}$</span>
            </div>
            
            <form action="${pageContext.request.contextPath}/do-checkout" method="POST" class="carrito-form-pago">
+             <input type="hidden" name="mockMode" value="true" />
              <button type="submit" class="carrito-btn-pagar">Proceder al pago</button>
+             
+             <!-- Botón de simulación solo para desarrollo -->
+             <c:if test="${mockModeEnabled == true}">
+               <button type="submit" name="mock_payment" value="true" class="carrito-btn-pagar btn-mock">Simular Pago Exitoso</button>
+             </c:if>
            </form>
         </c:when>
         <c:otherwise>

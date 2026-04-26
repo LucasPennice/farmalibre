@@ -21,6 +21,7 @@ import ActionController.checkout.CheckoutItemDTO;
 import ActionController.checkout.CheckoutRequestDTO;
 import ActionController.checkout.CheckoutResponseDTO;
 import ActionController.checkout.StockReductionService;
+import Utils.MockCheckoutUtil;
 import ActionController.auth.LoginRequestDTO;
 import ActionController.auth.LoginResponseDTO;
 import ActionController.auth.RegisterRequestDTO;
@@ -404,15 +405,14 @@ public class FrontController extends HttpServlet {
                     }
                 }
 
-                // Parseo distribucion: {"0":20,"1":30} -> 0:20,1:30
+                // Parseo distribucion: {"1":20,"2":30} -> 1:20,2:30 donde las claves son providerId
                 String jsonLimpio = distribucionJSON.replace("{", "").replace("}", "").replace("\"", "");
                 String[] pares = jsonLimpio.split(",");
 
-                // pares = ["0:20", "1:30"]
-                // Lo primero es la pos del proveedor y lo segundo la cantidad de droga elegida por proveedor
+                // pares = ["1:20", "2:30"]
+                // Lo primero es el providerId y lo segundo la cantidad de droga elegida por proveedor
 
                 // Filtro el stock de droga 
-
                 LinkedList<StockDroga> stocksDeEstaDroga = new LinkedList<>();
                 for (StockDroga stock : stockDrogas) {
                     if (stock.getDroga().getId().equals(Integer.parseInt(drogaId))) {
@@ -420,15 +420,31 @@ public class FrontController extends HttpServlet {
                     }
                 }
 
+                // Usar LinkedHashSet para contar proveedores únicos
+                java.util.Set<Integer> proveedoresUnicos = new java.util.LinkedHashSet<>();
+                StockDroga stockProveedor = null;
+
                 for (String par : pares) {
                     if (par.trim().isEmpty()) continue;
                     
                     String[] keyValue = par.split(":");
-                    int indiceProveedor = Integer.parseInt(keyValue[0].trim());
+                    int providerId = Integer.parseInt(keyValue[0].trim());
                     int cantidadProveedor = Integer.parseInt(keyValue[1].trim());
                     
-                    // Obtener el stock del proveedor usando el índice
-                    StockDroga stockProveedor = stocksDeEstaDroga.get(indiceProveedor);
+                    // Buscar el stock por providerId en lugar de índice
+                    for (StockDroga stock : stocksDeEstaDroga) {
+                        if (stock.getProveedor().getId().equals(providerId)) {
+                            stockProveedor = stock;
+                            break;
+                        }
+                    }
+                    
+                    if (stockProveedor == null) {
+                        continue;
+                    }
+                    
+                    // Agregar providerId a la lista de proveedores únicos
+                    proveedoresUnicos.add(providerId);
                     
                     // Crear ItemCarrito
                     ItemCarrito item = new ItemCarrito();
@@ -442,8 +458,10 @@ public class FrontController extends HttpServlet {
                     carritoService.addItemDroga(request.getSession(), item, precioTotal);
                 }
 
-                
-                
+                // Calcular costoEnvio = proveedoresUnicos × 5000
+                int costoEnvio = proveedoresUnicos.size() * 5000;
+                carritoService.setCostoEnvio(request.getSession(), costoEnvio);
+
                 if ("comprar".equals(action)) {
                     handleCarrito(request, response);
                 } else {
@@ -549,6 +567,12 @@ public class FrontController extends HttpServlet {
                     checkoutItems
                 );
                 
+                // Verificar si es modo mock (desde formulario)
+                String mockParam = request.getParameter("mock_payment");
+                if ("true".equals(mockParam) || "1".equals(mockParam)) {
+                    checkoutRequest.setMockMode(true);
+                }
+                
                 // Llamar al controlador de checkout
                 CheckoutResponseDTO checkoutResponse = CheckoutController.crearPreferenciaPago(checkoutRequest);
                 
@@ -576,6 +600,13 @@ public class FrontController extends HttpServlet {
                 String preferenceId = (String) request.getSession().getAttribute("checkoutPreferenceId");
                 String paymentId = request.getParameter("payment_id");
                 
+                // En modo mock, generar payment_id si no viene en параметros
+                String mockParam = request.getParameter("mock");
+                if ("true".equals(mockParam) && (paymentId == null || paymentId.isEmpty())) {
+                    paymentId = MockCheckoutUtil.generateMockPaymentId();
+                    log.info("MOCK: Generated payment ID for mock checkout: " + paymentId);
+                }
+                
                 // Obtener carrito antes de limpiarlo
                 CarritoService carritoService = new CarritoService();
                 Carrito carrito = carritoService.getCart(request.getSession());
@@ -588,6 +619,7 @@ public class FrontController extends HttpServlet {
                     try {
                         StockReductionService.reducirStock(carrito.getItems());
                         log.info("Stock reducido exitosamente");
+                        fetchNewState();
                     } catch (Exception e) {
                         log.warning("Error al reducir stock, pero el pago fue exitoso: " + e.getMessage());
                         errores.add("Pago completado pero hubo un error al actualizar el inventario");
@@ -708,9 +740,15 @@ public class FrontController extends HttpServlet {
             forward = request.getContextPath() + "/";
         }
 
-        // Obtener el carrito de la sesión
+// Obtener el carrito de la sesión
         CarritoService carritoService = new CarritoService();
         Carrito carrito = carritoService.getCart(request.getSession());
+        
+        // Verificar si hay token mock configurado (para desarrollo)
+        String mockToken = System.getenv("MOCK_CHECKOUT");
+        boolean mockEnabled = (mockToken != null && "true".equals(mockToken)) 
+            || "true".equals(System.getProperty("mock.checkout"));
+        request.setAttribute("mockModeEnabled", mockEnabled);
         
         request.setAttribute("carrito", carrito);
         request.setAttribute("pageTitle", "Carrito");
