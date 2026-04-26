@@ -12,6 +12,58 @@ import interfaces.GenericDAO;
 public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, String> {
     Logger log = Logger.getLogger(UsuarioDAO.class.getName());
 
+    private LinkedList<Integer> fetchWishlistIds(Integer usuarioId) throws SQLException {
+        LinkedList<Integer> wishlistIds = new LinkedList<>();
+        String sql = "SELECT stock_droga_proveedor_id FROM usuario_wishlist WHERE usuario_id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, usuarioId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            wishlistIds.add(rs.getInt("stock_droga_proveedor_id"));
+        }
+        rs.close();
+        ps.close();
+        return wishlistIds;
+    }
+
+    public void toggleItemEnWishlist(Integer usuarioId, Integer stockDrogaProveedorId) {
+        log.info("Toggling wishlist item " + stockDrogaProveedorId + " for user " + usuarioId);
+
+        try {
+            startConnection();
+
+            String checkSql = "SELECT 1 FROM usuario_wishlist WHERE usuario_id = ? AND stock_droga_proveedor_id = ?";
+            PreparedStatement checkPs = connection.prepareStatement(checkSql);
+            checkPs.setInt(1, usuarioId);
+            checkPs.setInt(2, stockDrogaProveedorId);
+            ResultSet rs = checkPs.executeQuery();
+            boolean yaExiste = rs.next();
+            rs.close();
+            checkPs.close();
+
+            if (yaExiste) {
+                String deleteSql = "DELETE FROM usuario_wishlist WHERE usuario_id = ? AND stock_droga_proveedor_id = ?";
+                PreparedStatement deletePs = connection.prepareStatement(deleteSql);
+                deletePs.setInt(1, usuarioId);
+                deletePs.setInt(2, stockDrogaProveedorId);
+                deletePs.executeUpdate();
+                deletePs.close();
+            } else {
+                String insertSql = "INSERT INTO usuario_wishlist (usuario_id, stock_droga_proveedor_id) VALUES (?, ?)";
+                PreparedStatement insertPs = connection.prepareStatement(insertSql);
+                insertPs.setInt(1, usuarioId);
+                insertPs.setInt(2, stockDrogaProveedorId);
+                insertPs.executeUpdate();
+                insertPs.close();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("No se puede actualizar la wishlist del usuario");
+        } finally {
+            closeConnection();
+        }
+    }
+
     @Override
     public Usuario findById(String id) {
         log.info("Finding user by ID: " + id);
@@ -36,6 +88,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setPassEncriptada((rs.getString("passEncriptada")));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
+                usuario.setStockProveedorWishlistIds(fetchWishlistIds(usuario.getId()));
             }
 
             rs.close();
@@ -72,6 +125,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setPassEncriptada((rs.getString("passEncriptada")));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
+                usuario.setStockProveedorWishlistIds(fetchWishlistIds(usuario.getId()));
             }
 
             rs.close();

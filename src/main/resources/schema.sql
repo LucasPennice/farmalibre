@@ -66,3 +66,14 @@ CREATE TABLE IF NOT EXISTS stock_droga_proveedor (
     UNIQUE (droga_id, proveedor_id)
 );
 
+-- =========================
+-- USUARIO WISHLIST
+-- =========================
+CREATE TABLE IF NOT EXISTS usuario_wishlist (
+    usuario_id INT NOT NULL,
+    stock_droga_proveedor_id INT NOT NULL,
+    PRIMARY KEY (usuario_id, stock_droga_proveedor_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    FOREIGN KEY (stock_droga_proveedor_id) REFERENCES stock_droga_proveedor(id)
+);
+

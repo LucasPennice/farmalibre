@@ -1,5 +1,7 @@
 package Usuario;
 
+import java.util.LinkedList;
+
 import Proveedor.Proveedor;
 import Proveedor.ProveedorService;
 
@@ -17,11 +19,15 @@ public class Usuario {
     private Boolean esAdmin;
     private Boolean esProveedor;
 
+    private LinkedList<Integer> stockProveedorWishlistIds;
+
+
+
     public Usuario() {
     }
 
     public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol,
-            String nombreUsuario, String passEncriptada) {
+            String nombreUsuario, String passEncriptada, LinkedList<Integer> stockProveedorWishlistIds) {
         this.id = id;
         this.nombreCompletoRes = NombreCompletoRes;
         this.direccion = direccion;
@@ -29,6 +35,7 @@ public class Usuario {
         this.rol = rol;
         this.nombreUsuario = nombreUsuario;
         this.passEncriptada = passEncriptada;
+        this.stockProveedorWishlistIds = stockProveedorWishlistIds != null ? stockProveedorWishlistIds : new LinkedList<Integer>();
     }
 
     public Integer getId() {
@@ -110,7 +117,7 @@ public class Usuario {
     public Boolean getEsProveedor(){
         return esProveedor;
     }
-
+    
     public void recalcularFlags() {
         if( this.getRol() == Rol.ADMIN){
             this.esAdmin = true;
@@ -132,5 +139,13 @@ public class Usuario {
             this.esProveedor = false;
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public LinkedList<Integer> getStockProveedorWishlistIds() {
+        return stockProveedorWishlistIds;
+    }
+
+    public void setStockProveedorWishlistIds(LinkedList<Integer> stockProveedorWishlistIds) {
+        this.stockProveedorWishlistIds = stockProveedorWishlistIds;
     }
 }

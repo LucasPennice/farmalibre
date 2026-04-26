@@ -69,6 +69,7 @@
           <th>Precio Unitario</th>
           <th>Disponibilidad</th>
           <th>Cantidad a comprar</th>
+          <th>Wishlist</th>
         </tr>
       </thead>
       <tbody>
@@ -100,6 +101,20 @@
                   value="0"
                   data-available="${s.disponible}"
                 />
+              </td>
+              <td>
+                <form action="${pageContext.request.contextPath}/do-toggle-item-wishlist" method="POST">
+                  <input type="hidden" name="stockId" value="${s.id}" />
+                  <input type="hidden" name="drogaId" value="${droga.idDroga}" />
+                  <c:choose>
+                    <c:when test="${wishlistIds.contains(s.id)}">
+                      <button type="submit" class="droga-btn droga-btn-secondary droga-btn-wishlist">★ En wishlist</button>
+                    </c:when>
+                    <c:otherwise>
+                      <button type="submit" class="droga-btn droga-btn-secondary droga-btn-wishlist" ${s.disponible == 0 ? '' : 'disabled style="opacity:0.4; cursor:not-allowed;"'}>☆ Agregar</button>
+                    </c:otherwise>
+                  </c:choose>
+                </form>
               </td>
             </tr>
           </c:if>
@@ -144,7 +159,7 @@
       }
 
       function setButtonsDisabled(disabled) {
-        document.querySelectorAll('.droga-btn').forEach(function (btn) {
+        document.querySelectorAll('.droga-btn:not(.droga-btn-wishlist)').forEach(function (btn) {
           btn.style.pointerEvents = disabled ? 'none' : 'auto';
           btn.style.opacity = disabled ? '0.5' : '1';
         });

@@ -59,8 +59,8 @@ INSERT INTO stock_droga_proveedor (droga_id, proveedor_id, disponible, precio_un
 (1, 3, 100, 125.00),
 
 -- Ibuprofeno
-(2, 1, 300, 180.00),
-(2, 2, 150, 175.00),
+(2, 1, 0, 180.00),
+(2, 2, 0, 175.00),
 
 -- Amoxicilina
 (3, 1, 120, 980.00),
