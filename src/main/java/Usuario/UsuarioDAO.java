@@ -12,18 +12,30 @@ import interfaces.GenericDAO;
 public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, String> {
     Logger log = Logger.getLogger(UsuarioDAO.class.getName());
 
-    private LinkedList<Integer> fetchWishlistIds(Integer usuarioId) throws SQLException {
-        LinkedList<Integer> wishlistIds = new LinkedList<>();
-        String sql = "SELECT stock_droga_proveedor_id FROM usuario_wishlist WHERE usuario_id = ?";
+    private LinkedList<WishlistItem> fetchWishlist(Integer usuarioId) throws SQLException {
+        LinkedList<WishlistItem> wishlist = new LinkedList<>();
+        String sql = "SELECT uw.stock_droga_proveedor_id, sdp.disponible, d.id AS droga_id, d.nombre AS droga_nombre, p.nombre_fantasia " +
+                     "FROM usuario_wishlist uw " +
+                     "JOIN stock_droga_proveedor sdp ON uw.stock_droga_proveedor_id = sdp.id " +
+                     "JOIN droga d ON sdp.droga_id = d.id " +
+                     "JOIN proveedor p ON sdp.proveedor_id = p.id " +
+                     "WHERE uw.usuario_id = ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setInt(1, usuarioId);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            wishlistIds.add(rs.getInt("stock_droga_proveedor_id"));
+            WishlistItem item = new WishlistItem(
+                rs.getInt("stock_droga_proveedor_id"),
+                rs.getInt("disponible") > 0,
+                rs.getInt("droga_id"),
+                rs.getString("droga_nombre"),
+                rs.getString("nombre_fantasia")
+            );
+            wishlist.add(item);
         }
         rs.close();
         ps.close();
-        return wishlistIds;
+        return wishlist;
     }
 
     public void toggleItemEnWishlist(Integer usuarioId, Integer stockDrogaProveedorId) {
@@ -88,7 +100,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setPassEncriptada((rs.getString("passEncriptada")));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
-                usuario.setStockProveedorWishlistIds(fetchWishlistIds(usuario.getId()));
+                usuario.setWishlist(fetchWishlist(usuario.getId()));
             }
 
             rs.close();
@@ -125,7 +137,7 @@ public class UsuarioDAO extends AbstractDAO implements GenericDAO<Usuario, Strin
                 usuario.setPassEncriptada((rs.getString("passEncriptada")));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setOnboarding_completo(rs.getBoolean("onboarding_completo"));
-                usuario.setStockProveedorWishlistIds(fetchWishlistIds(usuario.getId()));
+                usuario.setWishlist(fetchWishlist(usuario.getId()));
             }
 
             rs.close();

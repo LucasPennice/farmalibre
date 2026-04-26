@@ -19,7 +19,7 @@ public class Usuario {
     private Boolean esAdmin;
     private Boolean esProveedor;
 
-    private LinkedList<Integer> stockProveedorWishlistIds;
+    private LinkedList<WishlistItem> wishlist;
 
 
 
@@ -27,7 +27,7 @@ public class Usuario {
     }
 
     public Usuario(Integer id, String NombreCompletoRes, String direccion, byte[] foto_perfil, Rol rol,
-            String nombreUsuario, String passEncriptada, LinkedList<Integer> stockProveedorWishlistIds) {
+            String nombreUsuario, String passEncriptada, LinkedList<WishlistItem> wishlist) {
         this.id = id;
         this.nombreCompletoRes = NombreCompletoRes;
         this.direccion = direccion;
@@ -35,7 +35,7 @@ public class Usuario {
         this.rol = rol;
         this.nombreUsuario = nombreUsuario;
         this.passEncriptada = passEncriptada;
-        this.stockProveedorWishlistIds = stockProveedorWishlistIds != null ? stockProveedorWishlistIds : new LinkedList<Integer>();
+        this.wishlist = wishlist != null ? wishlist : new LinkedList<WishlistItem>();
     }
 
     public Integer getId() {
@@ -141,11 +141,11 @@ public class Usuario {
         }
     }
 
-    public LinkedList<Integer> getStockProveedorWishlistIds() {
-        return stockProveedorWishlistIds;
+    public LinkedList<WishlistItem> getWishlist() {
+        return wishlist;
     }
 
-    public void setStockProveedorWishlistIds(LinkedList<Integer> stockProveedorWishlistIds) {
-        this.stockProveedorWishlistIds = stockProveedorWishlistIds;
+    public void setWishlist(LinkedList<WishlistItem> wishlist) {
+        this.wishlist = wishlist;
     }
 }

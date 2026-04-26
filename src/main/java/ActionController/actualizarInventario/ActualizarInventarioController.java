@@ -60,8 +60,10 @@ public class ActualizarInventarioController {
             StockDroga stockDroga = stockDrogaService.findById(stockDrogaId);
 
             ItemInventarioDTO result = new ItemInventarioDTO();
-            Droga droga = stockDroga.getDroga();
-            CategoriaDroga categoriaDroga = droga.getCategoriaDroga();
+            DrogaService drogaService = new DrogaService();
+            Droga droga = drogaService.findById(stockDroga.getDroga().getId().toString());
+            CategoriaDrogaService categoriaDrogaService = new CategoriaDrogaService();
+            CategoriaDroga categoriaDroga = categoriaDrogaService.findById(droga.getCategoriaDroga().getId().toString());
                 
             result.setComposicion(droga.getComposicion());
             result.setDisponible(stockDroga.getDisponible());

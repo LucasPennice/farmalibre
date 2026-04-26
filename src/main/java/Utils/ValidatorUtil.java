@@ -56,6 +56,13 @@ public class ValidatorUtil {
         }
         return number > 0;
     }
+  
+    public static Boolean validateNumberGreaterOrEqualThanZero(Integer number) {
+        if (number == null) {
+            return false;
+        }
+        return number >= 0;
+    }
 
     public static Boolean validateNumberGreaterThanZero(Integer number) {
         if (number == null) {

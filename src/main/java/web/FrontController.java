@@ -42,6 +42,7 @@ import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 import Usuario.Usuario;
 import Usuario.UsuarioService;
+import Usuario.WishlistItem;
 import db.DatabaseInitializer;
 
 // NOTA: La refactorización se ha completado. Las funciones de autenticación (doLogin, doRegister, doLogout)
@@ -770,9 +771,12 @@ public class FrontController extends HttpServlet {
         }
 
         Usuario usuarioActual = (Usuario) request.getAttribute("usuario");
-        LinkedList<Integer> wishlistIds = usuarioActual != null && usuarioActual.getStockProveedorWishlistIds() != null
-                ? usuarioActual.getStockProveedorWishlistIds()
-                : new LinkedList<>();
+        LinkedList<Integer> wishlistIds = new LinkedList<>();
+        if (usuarioActual != null && usuarioActual.getWishlist() != null) {
+            for (WishlistItem item : usuarioActual.getWishlist()) {
+                wishlistIds.add(item.getStockId());
+            }
+        }
 
         request.setAttribute("droga", drogaAComprar);
         request.setAttribute("stockDrogas", stockDrogas);
