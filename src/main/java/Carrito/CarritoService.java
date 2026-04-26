@@ -51,9 +51,12 @@ public class CarritoService {
             cart.setItems(items);
         }
 
+        // Allow multiple providers for the same drug - check for duplicate by (drugId + providerId)
         for (ItemCarrito existingItem : items) {
-            if (existingItem.getDroga().getId().equals(item.getDroga().getId())) {
-                log.info("La droga ya existe en el carrito, no se agrega duplicado");
+            boolean mismaDroga = existingItem.getDroga().getId().equals(item.getDroga().getId());
+            boolean mismoProveedor = existingItem.getProveedor().getId().equals(item.getProveedor().getId());
+            if (mismaDroga && mismoProveedor) {
+                log.info("El item (droga + proveedor) ya existe en el carrito, no se agrega duplicado");
                 return;
             }
         }

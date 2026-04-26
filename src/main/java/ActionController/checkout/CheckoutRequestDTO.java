@@ -10,6 +10,7 @@ public class CheckoutRequestDTO {
     private Double total;
     private String description;
     private LinkedList<CheckoutItemDTO> items;
+    private boolean mockMode;
     
     // Constructores
     public CheckoutRequestDTO() {}
@@ -52,5 +53,13 @@ public class CheckoutRequestDTO {
     
     public void setItems(LinkedList<CheckoutItemDTO> items) {
         this.items = items;
+    }
+    
+    public boolean isMockMode() {
+        return mockMode;
+    }
+    
+    public void setMockMode(boolean mockMode) {
+        this.mockMode = mockMode;
     }
 }

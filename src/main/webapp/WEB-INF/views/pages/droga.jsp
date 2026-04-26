@@ -48,6 +48,7 @@
               <input type="hidden" name="drogaId" value="${droga.idDroga}">
               <input type="hidden" name="cantidad" id="cantidadHidden" value="1">
               <input type="hidden" id="distribucionJSON" name="distribucion" value="">
+              <input type="hidden" id="costoEnvioHidden" name="costoEnvio" value="0">
               
               <button type="submit" name="accion" value="comprar" class="droga-btn droga-btn-primary">
                   Comprar ahora
@@ -100,6 +101,7 @@
                   max="${s.disponible}"
                   value="0"
                   data-available="${s.disponible}"
+                  data-provider-id="${s.proveedor.id}"
                 />
               </td>
               <td>
@@ -255,12 +257,23 @@
             // Actualizar campos ocultos con valores actuales
             document.getElementById('cantidadHidden').value = cantidadInput.value;
             
-            // Crear objeto con distribucion
+            // Actualizar costoEnvio desde el display
+            var costoEnvioText = costoEnvioEl.textContent;
+            var costoEnvioValor = 0;
+            if (costoEnvioText && costoEnvioText !== '—') {
+                costoEnvioValor = parseInt(costoEnvioText.replace('$', ''), 10) || 0;
+            }
+            document.getElementById('costoEnvioHidden').value = costoEnvioValor;
+            
+            // Crear objeto con distribucion usando providerId
             var distribucion = {};
-            distribInputs.forEach(function(input, idx) {
+            distribInputs.forEach(function(input) {
                 var valor = Number(input.value || 0);
                 if (valor > 0) {
-                    distribucion[idx] = valor;
+                    var providerId = input.dataset.providerId;
+                    if (providerId) {
+                        distribucion[providerId] = valor;
+                    }
                 }
             });
             document.getElementById('distribucionJSON').value = JSON.stringify(distribucion);
