@@ -147,7 +147,7 @@ public class StockDrogaService implements GenericService<StockDroga, String> {
         if (stock.getDisponible() == null) {
             throw new IllegalArgumentException("La disponibilidad no puede ser nula");
         }
-        if (!ValidatorUtil.validateNumberGreaterThanZero(stock.getDisponible())) {
+        if (!ValidatorUtil.validateNumberGreaterOrEqualThanZero(stock.getDisponible())) {
             throw new IllegalArgumentException("La disponibilidad debe ser un número mayor o igual a cero");
         }
         if (stock.getPrecioUnitario() == null) {

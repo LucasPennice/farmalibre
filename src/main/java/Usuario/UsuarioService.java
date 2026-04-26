@@ -134,6 +134,18 @@ public class UsuarioService implements GenericService<Usuario, String> {
         }
     }
 
+    public void toggleWishlistItem(String usuarioId, Integer stockDrogaProveedorId) {
+        try {
+            log.info("Toggling wishlist item " + stockDrogaProveedorId + " para usuario " + usuarioId);
+            if (usuarioId == null || usuarioId.trim().isEmpty()) {
+                throw new IllegalArgumentException("El id del usuario no puede ser nulo o vacío");
+            }
+            usuarioDAO.toggleItemEnWishlist(Integer.parseInt(usuarioId), stockDrogaProveedorId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     static public Usuario registrar(String nombreCompleto, String email, String password) {
         // log.info("Registrando nuevo usuario: " + email);
 

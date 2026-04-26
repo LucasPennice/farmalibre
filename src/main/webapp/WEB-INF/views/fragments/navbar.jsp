@@ -64,6 +64,20 @@
 
   <div style="flex: 1"></div>
 
+  <c:if test="${not empty usuario and not empty usuario.wishlist}">
+    <div class="contenedor_categorias">
+      <h1>Wishlist</h1>
+      <c:forEach var="item" items="${usuario.wishlist}">
+        <a href="${pageContext.request.contextPath}/comprar-droga?drogaId=${item.drogaId}" class="contenedor_acciones_rapidas">
+          <div class="contenedor_acciones_rapidas_icono" style="background: ${item.tieneDisponibilidad ? '#2e7d32' : '#c62828'}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 10px; font-weight: bold;">${item.inicialesProveedor}</span>
+          </div>
+          <p>${item.nombreDroga}</p>
+        </a>
+      </c:forEach>
+    </div>
+  </c:if>
+
   <div class="auth-actions">
     <c:choose>
       <c:when test="${not empty sessionScope.usuario_id}">

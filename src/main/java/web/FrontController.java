@@ -42,6 +42,7 @@ import StockDroga.StockDroga;
 import StockDroga.StockDrogaService;
 import Usuario.Usuario;
 import Usuario.UsuarioService;
+import Usuario.WishlistItem;
 import db.DatabaseInitializer;
 
 // NOTA: La refactorización se ha completado. Las funciones de autenticación (doLogin, doRegister, doLogout)
@@ -456,6 +457,29 @@ public class FrontController extends HttpServlet {
             }
         }
 
+        if (path.startsWith("/do-toggle-item-wishlist")) {
+            try {
+                String usuarioId = getUserIdFromSession(request);
+                if (usuarioId == null) {
+                    errores.add("Debes estar logueado para modificar tu wishlist");
+                    handleLogin(request, response);
+                    return;
+                }
+                Integer stockId = Integer.parseInt(request.getParameter("stockId"));
+                String drogaId = request.getParameter("drogaId");
+
+                UsuarioService usuarioService = new UsuarioService();
+                usuarioService.toggleWishlistItem(usuarioId, stockId);
+
+                response.sendRedirect(request.getContextPath() + "/comprar-droga?drogaId=" + drogaId);
+                return;
+            } catch (Exception e) {
+                errores.add(e.getMessage());
+                handleHomepage(request, response);
+                return;
+            }
+        }
+
         if (path.startsWith("/do-eliminar-item-droga")) {
             try {
                 CarritoService carritoService = new CarritoService();
@@ -745,10 +769,19 @@ public class FrontController extends HttpServlet {
                 cantidadStockDroga += stock.getDisponible();
             }
         }
-        
+
+        Usuario usuarioActual = (Usuario) request.getAttribute("usuario");
+        LinkedList<Integer> wishlistIds = new LinkedList<>();
+        if (usuarioActual != null && usuarioActual.getWishlist() != null) {
+            for (WishlistItem item : usuarioActual.getWishlist()) {
+                wishlistIds.add(item.getStockId());
+            }
+        }
+
         request.setAttribute("droga", drogaAComprar);
         request.setAttribute("stockDrogas", stockDrogas);
         request.setAttribute("cantidadStockDroga", cantidadStockDroga);
+        request.setAttribute("wishlistIds", wishlistIds);
         request.setAttribute("pageTitle", "Compra de Drogas");
         request.setAttribute("content", "/WEB-INF/views/pages/droga.jsp");
         request.getRequestDispatcher("/WEB-INF/views/layouts/main.jsp").forward(request, response);
