@@ -54,16 +54,10 @@ public class ActualizarPerfilController {
             usuario.setEmail(emailContacto);
             usuario.setDireccion(direccionResponsable);
 
-            byte[] fotoPerfilBytes = null;
-
             if (fotoPerfilInput != null && fotoPerfilInput.getSize() > 0) {
                 InputStream is = fotoPerfilInput.getInputStream();
-                fotoPerfilBytes = is.readAllBytes();
+                usuario.setFoto_perfil(is.readAllBytes());
             }
-            
-            byte[] fotoPerfil = fotoPerfilBytes;
-
-            usuario.setFoto_perfil(fotoPerfil);
             
             usuarioService.update(usuario);
 
