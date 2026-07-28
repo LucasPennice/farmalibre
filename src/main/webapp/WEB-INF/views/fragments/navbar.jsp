@@ -2,7 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <nav class="navbar" style="position: sticky; top: 0; z-index: 1000;">
-  <a href="/farmalibre">
+  <a href="${pageContext.request.contextPath}/">
     <img src="${pageContext.request.contextPath}/assets/images/Logo.png" class="logo" />
   </a>
 

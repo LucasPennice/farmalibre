@@ -23,7 +23,8 @@ import Utils.MockCheckoutUtil;
  */
 public class CheckoutController {
     private static final Logger log = Logger.getLogger(CheckoutController.class.getName());
-    private static final String BACK_URL = "http://localhost:8080/farmalibre";
+    private static final String BACK_URL = System.getenv().getOrDefault("MP_BACK_URL",
+"http://localhost:8080/farmalibre");
     private static final String SUCCESS_URL = BACK_URL + "/checkout/success";
     private static final String FAILURE_URL = BACK_URL + "/checkout/failure";
     private static final String PENDING_URL = BACK_URL + "/checkout/pending";

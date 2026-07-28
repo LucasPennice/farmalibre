@@ -19,12 +19,12 @@
       </form>
     </div>
     <c:if test="${not empty usuario}">
-      <a href="/farmalibre/carrito" class="cart">
+      <a href="${pageContext.request.contextPath}/carrito" class="cart">
         <img src="${pageContext.request.contextPath}/assets/images/carrito.png" />
         <p class="badge">${itemsEnElCarrito}</p>
       </a>
 
-      <a href="/farmalibre/perfil" class="perfil_index_contenedor anchor_remove_styles">
+      <a href="${pageContext.request.contextPath}/perfil" class="perfil_index_contenedor anchor_remove_styles">
         <div class="foto_farmacia">
           <img src="${pageContext.request.contextPath}/usuario-foto?id=${usuario.id}" style="height: 100%; width: 100%; border-radius: 100px; object-fit: cover;" />
         </div>
@@ -37,7 +37,7 @@
 
   <div class="drogas_list_container">
     <c:forEach var="d" items="${drogaDTOs}">
-      <a href="/farmalibre/comprar-droga?drogaId=${d.idDroga}" class="drogas_container">
+      <a href="${pageContext.request.contextPath}/comprar-droga?drogaId=${d.idDroga}" class="drogas_container">
         <div class="drogas_left_container">
           <h1>${d.formula}</h1>
           <h2>${d.nombre}</h2>
