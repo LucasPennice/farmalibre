@@ -2,21 +2,30 @@ package db;
 
 import Utils.DbUtil;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 
 public class DatabaseInitializer {
 
+    private static final boolean DISABLED = "true".equalsIgnoreCase(
+            System.getenv("DB_INIT_DISABLED"));
+
     public static void init() {
+        if (DISABLED) return;
         try (Connection con = DbUtil.getConnection()) {
-            run(con, "./src/main/resources/schema.sql");
+            run(con, "schema.sql");
         } catch (Exception e) {
             throw new RuntimeException("Error inicializando la base", e);
         }
     }
 
-    public static void run(Connection con, String path) throws Exception {
-        BufferedReader reader = new BufferedReader(new FileReader(path));
+    public static void run(Connection con, String resource) throws Exception {
+        InputStream is = DatabaseInitializer.class.getClassLoader().getResourceAsStream(resource);
+        if (is == null) {
+            throw new RuntimeException("No se encontro " + resource + " en el classpath");
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sql = new StringBuilder();
         String line;
 
