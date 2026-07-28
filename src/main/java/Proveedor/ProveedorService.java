@@ -28,7 +28,7 @@ public class ProveedorService implements GenericService<Proveedor, String> {
             throw new RuntimeException(e.getMessage());
         }
     }
-  
+
     public Proveedor findByUsuarioId(String usuarioId) {
         try {
             log.info("Buscando proveedor por usuario ID: " + usuarioId);
@@ -148,7 +148,7 @@ public class ProveedorService implements GenericService<Proveedor, String> {
             throw new IllegalArgumentException("El CUIT no puede ser nulo o vacío");
         }
         // if (!ValidatorUtil.validateCuit(proveedor.getCuit())) {
-        //     throw new IllegalArgumentException("El CUIT no es válido");
+        // throw new IllegalArgumentException("El CUIT no es válido");
         // }
         if (proveedor.getTipoPersona() == null) {
             throw new IllegalArgumentException("El tipo de persona no puede ser nulo");

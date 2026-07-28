@@ -9,7 +9,7 @@
     "compile": "mvn compile -DskipTests",
     "quick": "./scripts/restart.sh",
     "refreshweb": "pnpm run compile & pnpm run deploy:skiptest",
-    "deploy": "mvn clean package && cp target/*.war $CATALINA_HOME/webapps/",
+    "deploy": "mvn clean package && rm -rf $CATALINA_HOME/webapps/farmalibre $CATALINA_HOME/webapps/farmalibre.war && cp target/*.war $CATALINA_HOME/webapps/",
     "deploy:skiptest": "mvn clean package -DskipTests && cp target/*.war $CATALINA_HOME/webapps/",
     "refresh": "npm run compile & npm run deploy",
     "tomcat:start": "dotenv -e .env.dev $CATALINA_HOME/bin/startup.sh",
