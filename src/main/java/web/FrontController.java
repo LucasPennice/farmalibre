@@ -785,27 +785,33 @@ public class FrontController extends HttpServlet {
     private void handleDroga(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-                
         String drogaId = request.getParameter("drogaId");
-        DrogaService drogaService = new DrogaService();
-        Droga droga = drogaService.findById(drogaId);
 
         if (drogaId == null || drogaId.trim().isEmpty()) {
             handleHomepage(request, response);
             return;
         }
 
+        DrogaService drogaService = new DrogaService();
+        Droga droga = drogaService.findById(drogaId);
+
+        if (droga == null) {
+            errores.add("No se encontró la droga solicitada");
+            handleHomepage(request, response);
+            return;
+        }
+
         DrogaDTO drogaAComprar = BuscarDrogasController.buscarDroga(droga);
 
-        Integer cantidadStockDroga = 0;
+        StockDrogaService stockDrogaService = new StockDrogaService();
+        LinkedList<StockDroga> stocksParaDroga = stockDrogaService.findByDroga(droga);
 
+        Integer cantidadStockDroga = 0;
         ProveedorService proveedorService = new ProveedorService();
-        for (StockDroga stock : stockDrogas) {
-            if (stock.getDroga().getId().equals(Integer.parseInt(drogaId))) {
-                stock.setDroga(droga); 
-                stock.setProveedor(proveedorService.findById(String.valueOf(stock.getProveedor().getId())));
-                cantidadStockDroga += stock.getDisponible();
-            }
+        for (StockDroga stock : stocksParaDroga) {
+            stock.setDroga(droga);
+            stock.setProveedor(proveedorService.findById(String.valueOf(stock.getProveedor().getId())));
+            cantidadStockDroga += stock.getDisponible();
         }
 
         Usuario usuarioActual = (Usuario) request.getAttribute("usuario");
@@ -817,7 +823,7 @@ public class FrontController extends HttpServlet {
         }
 
         request.setAttribute("droga", drogaAComprar);
-        request.setAttribute("stockDrogas", stockDrogas);
+        request.setAttribute("stockDrogas", stocksParaDroga);
         request.setAttribute("cantidadStockDroga", cantidadStockDroga);
         request.setAttribute("wishlistIds", wishlistIds);
         request.setAttribute("pageTitle", "Compra de Drogas");

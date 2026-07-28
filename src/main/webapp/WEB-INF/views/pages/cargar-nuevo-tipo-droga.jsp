@@ -52,7 +52,7 @@
       </label>
 
       <label class="field">
-        <span class="field__label">Unidad*</span>
+        <span class="field__label">Unidad* (Ej: Gramos)</span>
         <input class="field__input" type="text" name="unidad" required/>
       </label>
 
